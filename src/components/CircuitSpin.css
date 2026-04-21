@@ -1,0 +1,332 @@
+.circuit-spin-container {
+    margin: 0;
+    font-family: var(--font-body);
+    background: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: absolute; /* Breaks out of any parent constraints */
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow-x: hidden;
+    z-index: 10;
+}
+
+/* Main Content */
+.spin-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 4rem;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* Title Section */
+.spin-title-section {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.title-pill {
+    padding: 0.6rem 4rem;
+    border-radius: 50px;
+    border: 2.5px solid transparent;
+    background:
+        linear-gradient(white, white) padding-box,
+        linear-gradient(135deg, #f97316, #0b0b8c, #046a38) border-box;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.title-pill h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #046a38;
+    margin: 0;
+}
+
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #64748b;
+    margin: 0;
+}
+
+/* Wheel and Content Wrapper */
+.wheel-content-wrapper {
+    display: flex;
+    gap: 4rem;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* Wheel Section */
+.wheel-section {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+}
+
+/* Red Pointer */
+.wheel-pointer {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 30px solid #dc2626;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+/* Wheel and Button Container */
+.wheel-and-button {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+}
+
+/* Teardrop Button - LEFT SIDE */
+.teardrop-button-container {
+    position: relative;
+    z-index: 5;
+    margin-right: -60px;
+}
+
+.teardrop-spin-btn {
+    width: 100px;
+    height: 100px;
+    background: white;
+    border: 4px solid #d4a574;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.teardrop-spin-btn:hover:not(:disabled) {
+    transform: rotate(-45deg) scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.teardrop-spin-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.spin-text {
+    transform: rotate(45deg);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0b0b8c;
+}
+
+/* Wheel Outer Container */
+.wheel-outer {
+    width: 600px; /* Increased from 450px */
+    height: 600px;
+    border-radius: 50%;
+    border: 10px solid #c8a375; /* Slightly thicker rim */
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* Wheel Rotate Container */
+.wheel-rotate {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 4.5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    background: conic-gradient(
+        from -30deg,
+        #c49a50 0deg 60deg,
+        #115d48 60deg 120deg,
+        #083d36 120deg 180deg,
+        #5c6b46 180deg 240deg,
+        #a8865c 240deg 300deg,
+        #031d42 300deg 360deg
+    );
+}
+
+.wheel-text-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    margin-top: -50%;
+    margin-left: -50%;
+    transform-origin: 50% 50%;
+    pointer-events: none;
+}
+
+.wheel-text {
+    position: absolute;
+    top: 12%; /* Moved up slightly to center better in larger slices */
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 1.8rem; /* Increased from 1.4rem */
+    font-weight: 700;
+    text-align: center;
+    max-width: 130px; /* Widened slightly */
+}
+
+/* Center Teardrop Pointer */
+.wheel-center-pointer-shape {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 140px; /* Increased from 110px */
+    height: 140px;
+    background: white;
+    border: 5px solid #d4a574;
+    border-radius: 0 50% 50% 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    cursor: pointer;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.1), 0 5px 20px rgba(0,0,0,0.3);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+}
+
+.wheel-center-pointer-shape:hover {
+    transform: translate(-50%, -50%) rotate(45deg) scale(1.08);
+}
+
+.wheel-center-pointer-text {
+    transform: rotate(-45deg);
+    font-size: 2.2rem; /* Increased from 1.8rem */
+    font-weight: 800;
+}
+
+/* Linear gradient text matching the title pill */
+.spin-gradient-text {
+    background: linear-gradient(135deg, #f97316, #0b0b8c, #046a38);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    font-family: var(--font-body);
+    letter-spacing: 0.02em;
+}
+
+
+/* Content Section Elements */
+.detail-item-green {
+    font-size: 1.4rem; /* Increased font size */
+    color: #046a38;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+}
+
+.topic-title {
+    font-size: 2.8rem; /* Increased from 2rem */
+    color: #0b0b8c;
+    margin-bottom: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .wheel-content-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .content-section {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-logo {
+        font-size: 1.4rem;
+    }
+
+    .title-pill {
+        padding: 0.4rem 1.5rem;
+    }
+
+    .title-pill h2 {
+        font-size: 1.5rem;
+    }
+
+    .wheel-outer {
+        width: 320px;
+        height: 320px;
+    }
+
+    .wheel-center-pointer-shape {
+        width: 80px;
+        height: 80px;
+    }
+
+    .wheel-text {
+        font-size: 1rem;
+    }
+
+    .content-card {
+        padding: 2rem;
+    }
+
+    .spin-main-content {
+        padding: 2rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .wheel-outer {
+        width: 280px;
+        height: 280px;
+    }
+    .wheel-center-pointer-shape {
+        width: 70px;
+        height: 70px;
+    }
+    .title-pill h2 {
+        font-size: 1.2rem;
+    }
+    .topic-title {
+        font-size: 1.5rem;
+    }
+    .wheel-text {
+        font-size: 0.8rem;
+        max-width: 70px;
+    }
+}
+
+/* Fix footer link gaps for responsiveness */
+@media (max-width: 1024px) {
+    .circuit-spin-container .footer-links {
+        gap: 2rem !important;
+        flex-wrap: wrap;
+    }
+    .circuit-spin-container .footer-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+}

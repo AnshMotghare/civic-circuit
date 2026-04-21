@@ -1,0 +1,698 @@
+/* ==============================
+   LEXICON CIRCUIT — Full Styles
+   ============================== */
+
+.lexicon-container {
+    margin: 0;
+    font-family: var(--font-body);
+    background: #f5f7fb;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow-x: hidden;
+    z-index: 10;
+}
+
+.lexicon-main {
+    flex: 1;
+    max-width: 860px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ==============================
+   GRADIENT PILL TITLE
+   ============================== */
+
+.lexicon-title-section {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.lexicon-title-pill {
+    display: inline-block;
+    padding: 0.6rem 2.5rem;
+    border-radius: 999px;
+    border: 2.5px solid transparent;
+    background:
+        linear-gradient(white, white) padding-box,
+        linear-gradient(135deg, #f97316, #0b0b8c, #046a38) border-box;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 12px rgba(11, 11, 140, 0.08);
+}
+
+.lexicon-title-pill span {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #046a38;
+    letter-spacing: 0.01em;
+}
+
+.lexicon-subtitle {
+    color: #64748b;
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* ==============================
+   PROGRESS BAR
+   ============================== */
+
+.lexicon-progress-bar-container {
+    background: #e2e8f0;
+    border-radius: 999px;
+    height: 10px;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: visible;
+}
+
+.lexicon-progress-bar {
+    background: linear-gradient(90deg, #046a38, #0b0b8c);
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.5s ease;
+    min-width: 4px;
+}
+
+.lexicon-progress-text {
+    position: absolute;
+    right: 0;
+    top: -24px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+/* ==============================
+   MAIN GAME CARD
+   ============================== */
+
+.lexicon-game-area {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+}
+
+/* ── Word counter badge ── */
+.word-number-badge {
+    display: inline-flex;
+    align-items: center;
+    background: #eff6ff;
+    color: #0b0b8c;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.35rem 1rem;
+    border-radius: 999px;
+    border: 1.5px solid #c7d2fe;
+    align-self: flex-start;
+}
+
+/* ==============================
+   HINT SPEECH BUBBLE ROW
+   ============================== */
+
+.hint-display-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Green speech-bubble tag (pointing right) */
+.hint-box {
+    background-color: #0d6832;
+    color: white;
+    padding: 0.85rem 1.4rem;
+    border-radius: 10px 0 0 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(13, 104, 50, 0.25);
+    line-height: 1.5;
+    flex: 1;
+}
+
+.hint-box::after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 18px solid transparent;
+    border-bottom: 18px solid transparent;
+    border-left: 20px solid #0d6832;
+}
+
+.article-badge {
+    background: #f0fdf4;
+    color: #046a38;
+    border: 1.5px solid #86efac;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ==============================
+   LETTER TILES (scrambled)
+   ============================== */
+
+.tiles-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tiles-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.tiles-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.letter-tiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.letter-tile {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, #f0f4ff, #e8f0fe);
+    border: 2px solid #c7d2fe;
+    border-radius: 10px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0b0b8c;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body);
+    box-shadow: 0 2px 6px rgba(11, 11, 140, 0.1);
+    user-select: none;
+}
+
+.letter-tile:hover:not(:disabled) {
+    background: linear-gradient(135deg, #0b0b8c, #1a1a9e);
+    color: white;
+    border-color: #0b0b8c;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(11, 11, 140, 0.3);
+}
+
+.letter-tile:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Used tile — greyed out, slot taken */
+.letter-tile--used {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #cbd5e1;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* ==============================
+   TYPED ANSWER INPUT
+   ============================== */
+
+.answer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.answer-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Input + clear button side by side */
+.answer-input-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+}
+
+.lexicon-input {
+    flex: 1;
+    padding: 0.85rem 1.2rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    font-family: var(--font-body), monospace;
+    letter-spacing: 0.15em;
+    border: 2.5px solid #c7d2fe;
+    border-radius: 12px;
+    background: #f8faff;
+    color: #0b0b8c;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-transform: uppercase;
+    caret-color: #0b0b8c;
+}
+
+.lexicon-input:focus {
+    border-color: #0b0b8c;
+    box-shadow: 0 0 0 3px rgba(11, 11, 140, 0.12);
+    background: #fff;
+}
+
+.lexicon-input--correct {
+    border-color: #22c55e !important;
+    background: #f0fdf4 !important;
+    color: #16a34a !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15) !important;
+}
+
+.lexicon-input--wrong {
+    border-color: #ef4444 !important;
+    background: #fef2f2 !important;
+    color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+    animation: shake 0.35s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-6px); }
+    40%       { transform: translateX(6px); }
+    60%       { transform: translateX(-4px); }
+    80%       { transform: translateX(4px); }
+}
+
+.control-btn {
+    padding: 0.55rem 1.2rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    font-family: var(--font-body);
+    border-radius: 8px;
+    border: 2px solid #cbd5e1;
+    background: white;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.control-btn:hover:not(:disabled) {
+    border-color: #0b0b8c;
+    color: #0b0b8c;
+    background: #eff6ff;
+}
+
+.control-btn--clear:hover:not(:disabled) {
+    border-color: #ef4444;
+    color: #ef4444;
+    background: #fef2f2;
+}
+
+.control-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+
+
+/* ==============================
+   FEEDBACK BANNERS
+   ============================== */
+
+@keyframes bannerIn {
+    from { transform: translateY(12px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.feedback-banner {
+    border-radius: 999px;
+    padding: 0.85rem 2rem;
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 800;
+    font-family: var(--font-body);
+    letter-spacing: 0.02em;
+    animation: bannerIn 0.25s ease;
+}
+
+/* RED "Wrong Word... Try Again..." */
+.feedback-banner--wrong {
+    background: #ef4444;
+    color: white;
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.35);
+}
+
+/* GREEN "✓ Correct!" */
+.feedback-banner--correct {
+    background: #22c55e;
+    color: white;
+    box-shadow: 0 4px 16px rgba(34, 197, 94, 0.35);
+}
+
+.lexicon-info-card {
+    background: #f8f6f0;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-top: 1rem;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    animation: bannerIn 0.3s ease;
+}
+
+.lexicon-info-card-title {
+    color: #0b0b8c;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    margin-top: 0;
+    text-align: center;
+}
+
+.lexicon-info-card-content {
+    color: #1e293b;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.lexicon-info-card-content ol {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.lexicon-info-card-content li {
+    margin-bottom: 0.25rem;
+}
+
+.lexicon-info-card-content strong {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+/* ==============================
+   BOTTOM ROW: Hint + Submit
+   ============================== */
+
+.game-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Lightbulb PNG button */
+.hint-bulb-btn {
+    width: 52px;
+    height: 52px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    transition: all 0.2s ease;
+    filter: drop-shadow(0 2px 6px rgba(4, 106, 56, 0.3));
+    flex-shrink: 0;
+}
+
+.hint-bulb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.hint-bulb-btn:hover:not(:disabled) {
+    filter: drop-shadow(0 4px 12px rgba(4, 106, 56, 0.55));
+    transform: scale(1.12);
+}
+
+.hint-bulb-btn--active {
+    filter: drop-shadow(0 4px 14px rgba(249, 115, 22, 0.5));
+}
+
+.hint-bulb-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: none;
+    transform: none;
+}
+
+/* Submit button */
+.submit-btn {
+    padding: 0.8rem 2.5rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.03em;
+}
+
+.submit-btn--solid {
+    background: #0b0b8c;
+    border: 2px solid #0b0b8c;
+    color: white;
+    box-shadow: 0 2px 10px rgba(11, 11, 140, 0.2);
+}
+
+.submit-btn--solid:hover:not(:disabled) {
+    background: #08086b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(11, 11, 140, 0.35);
+}
+
+.submit-btn:disabled {
+    background: #e2e8f0;
+    border-color: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ==============================
+   HINT POPUP MODAL
+   ============================== */
+
+.hint-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeOverlay 0.2s ease;
+}
+
+@keyframes fadeOverlay {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.hint-modal {
+    background: linear-gradient(145deg, #046a38, #0d9653);
+    color: white;
+    border-radius: 20px;
+    padding: 2.5rem 2rem 2rem;
+    max-width: 420px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 25px 60px rgba(4, 106, 56, 0.4);
+    text-align: center;
+    animation: modalPop 0.25s ease;
+}
+
+@keyframes modalPop {
+    from { transform: scale(0.88); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+}
+
+.hint-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.hint-modal-close:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.hint-modal-bulb {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+}
+
+.hint-modal-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0 0 0.75rem;
+    letter-spacing: 0.03em;
+}
+
+.hint-modal-text {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin: 0 0 0.6rem;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.hint-modal-article {
+    font-size: 0.9rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    display: inline-block;
+    padding: 0.3rem 1rem;
+    margin: 0.5rem 0 1rem;
+    letter-spacing: 0.05em;
+}
+
+.hint-modal-meta {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.hint-modal-meta strong {
+    color: #fff;
+    font-weight: 800;
+}
+
+/* ==============================
+   GAME COMPLETE
+   ============================== */
+
+.game-complete {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.game-complete-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.game-complete h2 {
+    color: #046a38;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+}
+
+.game-complete p {
+    color: #64748b;
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+}
+
+.restart-btn {
+    background: linear-gradient(135deg, #046a38, #0d9653);
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    font-family: var(--font-body);
+    box-shadow: 0 4px 16px rgba(4, 106, 56, 0.3);
+    transition: all 0.2s;
+}
+
+.restart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(4, 106, 56, 0.4);
+}
+
+/* ==============================
+   RESPONSIVE
+   ============================== */
+
+@media (max-width: 600px) {
+    .lexicon-game-area {
+        padding: 1.5rem 1.25rem;
+        gap: 1.4rem;
+    }
+
+    .hint-box {
+        border-radius: 10px;
+        font-size: 0.92rem;
+    }
+
+    .hint-box::after {
+        display: none;
+    }
+
+    .letter-tile,
+    .answer-slot {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+    }
+
+    .lexicon-title-pill span {
+        font-size: 1.3rem;
+    }
+
+    .game-bottom-row {
+        justify-content: center;
+    }
+
+    .submit-btn--solid {
+        padding: 0.8rem 1.8rem;
+    }
+}
