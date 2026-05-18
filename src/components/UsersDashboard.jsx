@@ -14,7 +14,7 @@ const getLearnerLevel = (points) => {
 
 function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSelect, onStartQuiz, onStartSpinWheel, onStartLexicon }) {
   const API_ROOT = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
-  const ANTHROPIC_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY || ''
+  const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY || ''
   const storedFullname = sessionStorage.getItem('fullname') || ''
   const storedEmail = sessionStorage.getItem('email') || ''
   const displayNameOverride = storedEmail ? (localStorage.getItem(`displayName_${storedEmail}`) || '') : ''
@@ -67,25 +67,21 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
 
     const fetchFact = async () => {
       try {
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': ANTHROPIC_KEY,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'
-          },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 300,
-            messages: [{
-              role: 'user',
-              content: `Generate a unique and interesting constitutional fact about the Indian Constitution. Respond ONLY in JSON with no extra text or markdown: {"category": "category name like Fundamental Rights or Directive Principles", "title": "Article XX - Short Title", "description": "2-3 sentence explanation of the article or fact", "highlight": "one interesting statistic or historical detail about it"}`
-            }]
-          })
-        })
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: 'Generate a unique and interesting constitutional fact about the Indian Constitution. Respond ONLY in JSON with no extra text or markdown backticks: {"category": "category name like Fundamental Rights or Directive Principles", "title": "Article XX - Short Title", "description": "2-3 sentence explanation of the article or fact", "highlight": "one interesting statistic or historical detail about it"}' }] }],
+              generationConfig: { maxOutputTokens: 300, temperature: 0.9 }
+            })
+          }
+        )
         const data = await response.json()
-        const fact = JSON.parse(data.content[0].text)
+        const text = data.candidates[0].content.parts[0].text.trim()
+        const clean = text.replace(/```json|```/g, '').trim()
+        const fact = JSON.parse(clean)
         localStorage.setItem('dailyFact', JSON.stringify(fact))
         localStorage.setItem('dailyFactDate', today)
         setDailyFact(fact)
@@ -102,7 +98,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     }
 
     fetchFact()
-  }, [ANTHROPIC_KEY])
+  }, [GEMINI_KEY])
 
   const totalPoints = Math.max(0, userStats.factor * POINTS_PER_CORRECT_ANSWER)
   const learnerLevel = getLearnerLevel(totalPoints)
