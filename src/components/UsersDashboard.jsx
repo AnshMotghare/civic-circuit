@@ -61,7 +61,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
   const learningModules = [
     {
       id: 'executive',
-      image: 'src/assets/Executive.png',
+      image: '/assets/Executive.png',
       title: 'The Executive (Union Level)',
       articles: 'Articles 52-78',
       description: 'Learn about the President, Vice President, Prime Minister, and Council of Ministers who run the Union Government.',
@@ -72,7 +72,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'parliament',
-      image: 'src/assets/legislature.png.jpg',
+      image: '/assets/legislature.png.jpg',
       title: 'The Parliament',
       articles: 'Articles 79-122',
       description: 'Explore how Lok Sabha and Rajya Sabha work, how laws are made, and the powers of Parliament in India.',
@@ -83,7 +83,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'powers',
-      image: 'src/assets/legislative-power.png.jpg',
+      image: '/assets/legislative-power.png.jpg',
       title: 'Legislative Powers',
       articles: 'Articles 123-151',
       description: "Discover Presidential ordinances, parliamentary privileges, the Supreme Court's role, and the powers of the CAG.",
@@ -94,7 +94,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'state-executive',
-      image: 'src/assets/state-executive.png.jpg',
+      image: '/assets/state-executive.png.jpg',
       title: 'The State Executive',
       articles: 'Articles 152-167',
       description: "Understand the Governor's role, Chief Minister's leadership, and how the State Executive functions.",
@@ -105,7 +105,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'state-legislature',
-      image: 'src/assets/State.png',
+      image: '/assets/State.png',
       title: 'The State Legislature',
       articles: 'Articles 168-212',
       description: 'Learn about the State Legislative Assembly and Council, their powers, and how state laws are created.',
@@ -116,7 +116,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'judiciary',
-      image: 'src/assets/state-legislative.png.jpg',
+      image: '/assets/state-legislative.png.jpg',
       title: 'State Judiciary',
       articles: 'Articles 213-237',
       description: "Study the structure and powers of High Courts, Subordinate Courts, and the Governor's ordinance powers.",
@@ -131,7 +131,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
   const games = [
     {
       id: 'knowledge-quest',
-      image: 'src/assets/knowledge-quest.png.jpg',
+      image: '/assets/knowledge-quest.png.jpg',
       title: 'Quiz Circuit',
       subtitle: 'Quiz Game Mode',
       description: "Test your understanding of India's Legislature, Executive, and Judiciary through structured quizzes.",
@@ -149,7 +149,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'lexicon-circuit',
-      image: 'src/assets/Word Game Icon.png',
+      image: '/assets/Word Game Icon.png',
       title: 'Lexicon Circuit',
       subtitle: 'Constitution Word Game',
       description: 'Match constitutional terms with their meanings, articles with their concepts, and institutions with their roles',
@@ -167,7 +167,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'spin-wheel',
-      image: 'src/assets/spin-wheel.png.jpg',
+      image: '/assets/spin-wheel.png.jpg',
       title: 'Circuit Spin',
       subtitle: 'Spin to Explore Constitutional Topics',
       description: 'Spin the wheel to unlock constitutional categories and explore related articles, institutions, and key provisions.',
@@ -291,7 +291,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
           <div className="fact-of-the-day-new">
             <div className="fact-icon-container">
               <img 
-                src="src/assets/bulb-idea-light_svgrepo.com (1).png" 
+                src="/assets/bulb-idea-light_svgrepo.com (1).png" 
                 alt="Idea Icon" 
                 className="fact-icon-svg-new"
               />
