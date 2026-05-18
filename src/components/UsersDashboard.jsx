@@ -1,8 +1,63 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Footer from './Footer'
+
+const POINTS_PER_CORRECT_ANSWER = 100
+
+const getLearnerLevel = (points) => {
+  if (points >= 5000) return { rank: 4, title: 'Constitution Champion' }
+  if (points >= 3000) return { rank: 3, title: 'Advanced Learner' }
+  if (points >= 1500) return { rank: 2, title: 'Intermediate Learner' }
+  if (points >= 500) return { rank: 1, title: 'Rising Learner' }
+  return { rank: 0, title: 'Basic Learner' }
+}
 
 
 function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSelect, onStartQuiz, onStartSpinWheel, onStartLexicon }) {
+  const API_ROOT = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+  const storedFullname = sessionStorage.getItem('fullname') || ''
+  const storedEmail = sessionStorage.getItem('email') || ''
+  const displayNameOverride = storedEmail ? (localStorage.getItem(`displayName_${storedEmail}`) || '') : ''
+  const emailName = storedEmail.includes('@') ? storedEmail.split('@')[0] : ''
+  const displayName = (displayNameOverride || storedFullname || emailName || 'Guest').trim()
+  const [userStats, setUserStats] = useState({ gamesCompleted: 0, accuracyRate: 0, attempted: 0, factor: 0 })
+  const [nameInput, setNameInput] = useState(displayName)
+  const isFirstTime = sessionStorage.getItem('firstTime') === 'true'
+  const [showNamePrompt, setShowNamePrompt] = useState(isFirstTime && !displayNameOverride)
+
+  useEffect(() => {
+    const email = sessionStorage.getItem('email')
+    if (!email) {
+      return
+    }
+
+    const fetchUserStats = async () => {
+      try {
+        const response = await fetch(`${API_ROOT}/app/user/${encodeURIComponent(email)}`)
+        if (!response.ok) {
+          return
+        }
+
+        const data = await response.json()
+        const overallAccuracy = Number(data.accuracyRate || 0)
+        const lexiconAccuracy = Number(data.lexiconAccuracyRate || 0)
+
+        setUserStats({
+          gamesCompleted: Number(data.gamesCompleted || 0),
+          accuracyRate: overallAccuracy > 0 ? overallAccuracy : lexiconAccuracy,
+          attempted: Number(data.attempted || 0),
+          factor: Number(data.factor || 0)
+        })
+      } catch {
+        // Keep fallback static stats if API call fails.
+      }
+    }
+
+    fetchUserStats()
+  }, [API_ROOT])
+
+  const totalPoints = Math.max(0, userStats.factor * POINTS_PER_CORRECT_ANSWER)
+  const learnerLevel = getLearnerLevel(totalPoints)
+
   const learningModules = [
     {
       id: 'executive',
@@ -147,6 +202,18 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     }
   }
 
+  const handleSaveDisplayName = () => {
+    const name = (nameInput || '').trim()
+    if (!name) return
+
+    if (storedEmail) {
+      localStorage.setItem(`displayName_${storedEmail}`, name)
+      sessionStorage.setItem('fullname', name)
+      sessionStorage.setItem('firstTime', 'false')
+      setShowNamePrompt(false)
+    }
+  }
+
   return (
     <div className="dashboard-page">
       {/* Dashboard Header */}
@@ -173,11 +240,28 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
         <div className="container">
           {/* Gradient Welcome Banner */}
           <div className="welcome-banner-gradient">
-            <h2>Welcome back, User123 !</h2>
+            <h2>{isFirstTime ? `Welcome, ${displayName}!` : `Welcome back, ${displayName}!`}</h2>
             <p>Ready to continue your constitutional learning journey? You're making great progress!</p>
+
+            {showNamePrompt && (
+              <div className="name-prompt">
+                <p style={{ marginBottom: '8px' }}>Looks like this is your first time — pick a display name to show in the app:</p>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <input
+                    type="text"
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    placeholder="Display name"
+                    style={{ padding: '8px', borderRadius: '6px', border: '1px solid #ccc' }}
+                  />
+                  <button onClick={handleSaveDisplayName} className="save-name-btn">Save</button>
+                </div>
+              </div>
+            )}
+
             <div className="banner-stats-inline">
-              <span>• Level 0: Basic Learner</span>
-              <span>• 0 Total Points</span>
+              <span>• Level {learnerLevel.rank}: {learnerLevel.title}</span>
+              <span>• {totalPoints} Total Points</span>
             </div>
           </div>
 
@@ -189,7 +273,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
                 <h4>Games Completed</h4>
                 <span className="stat-icon">🏆</span>
               </div>
-              <p className="stat-value">0</p>
+              <p className="stat-value">{userStats.gamesCompleted}</p>
             </div>
 
 
@@ -198,7 +282,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
                 <h4>Accuracy Rate</h4>
                 <span className="stat-icon">🎯</span>
               </div>
-              <p className="stat-value">0%</p>
+              <p className="stat-value">{Math.round(userStats.accuracyRate)}%</p>
             </div>
           </div>
 

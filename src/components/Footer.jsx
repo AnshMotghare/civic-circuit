@@ -58,9 +58,9 @@ function Footer({ onNavigateHome, onNavigateDashboard, onNavigateSupport, isLogg
             </div>
             <div className="footer-column">
               <h4>Resources</h4>
-              <a href="https://legislative.gov.in/sites/default/files/COI_English.pdf" target="_blank" rel="noopener noreferrer">Constitution of India</a>
-              <a href="https://legislative.gov.in/sites/default/files/COI_English.pdf" target="_blank" rel="noopener noreferrer">Legal Glossary</a>
-              <a href={isLoggedIn ? "/dashboard#modules" : "/#modules"} onClick={isLoggedIn ? handleHomeNavigation : null}>Learning Materials</a>
+              <a href="https://www.legislative.gov.in/constitution-of-india" target="_blank" rel="noopener noreferrer">Constitution of India</a>
+              <a href="https://www.legislative.gov.in/legal-glossary" target="_blank" rel="noopener noreferrer">Legal Glossary</a>
+              <a href="https://www.constitutionofindia.net/learn/" target="_blank" rel="noopener noreferrer">Learning Material</a>
             </div>
           </div>
         </div>

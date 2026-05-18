@@ -66,7 +66,30 @@ function App() {
     setShowSignup(false)
   }
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (userData) => {
+    // store any provided user data from the auth modal
+    if (userData && userData.email) {
+      sessionStorage.setItem('email', userData.email)
+    }
+    if (userData && userData.fullname) {
+      sessionStorage.setItem('fullname', userData.fullname)
+    }
+
+    // determine if this is the user's first time (persisted by email)
+    const email = sessionStorage.getItem('email')
+    if (email) {
+      const seenKey = `seen_${email}`
+      const seen = localStorage.getItem(seenKey)
+      if (!seen) {
+        sessionStorage.setItem('firstTime', 'true')
+        localStorage.setItem(seenKey, Date.now().toString())
+      } else {
+        sessionStorage.setItem('firstTime', 'false')
+      }
+    } else {
+      sessionStorage.setItem('firstTime', 'false')
+    }
+
     setIsLoggedIn(true)
     sessionStorage.setItem('isLoggedIn', 'true')
     setCurrentPage('dashboard')

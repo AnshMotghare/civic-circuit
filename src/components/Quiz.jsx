@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import Footer from './Footer'
 import './Quiz.css'
 
-const QUIZ_API_BASE = 'http://localhost:9091/quiz'
+const API_ROOT = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const QUIZ_API_BASE = `${API_ROOT}/quiz`
 const POINTS_PER_QUESTION = 100
 
 // Simple shuffle for options so correct answer isn't always last
@@ -271,9 +272,9 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
               <span className="username">
                 {sessionStorage.getItem('email') || 'Guest'}
               </span>
-              {onLogout && (
-                <button className="logout-btn" onClick={onLogout}>
-                  Log Out
+              {onBackToDashboard && (
+                <button className="logout-btn" onClick={onBackToDashboard}>
+                  Back
                 </button>
               )}
             </div>
@@ -321,7 +322,7 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
             {/* Bottom Section - Exit Button Only */}
             <div className="quiz-sidebar-bottom">
               <button className="exit-btn" onClick={onBackToDashboard}>
-                Exit
+                Back
               </button>
             </div>
           </div>

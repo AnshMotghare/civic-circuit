@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { signInWithGoogle } from '../firebase'
 
-const API_BASE_URL = "http://localhost:9091/app";
+const API_ROOT = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const API_BASE_URL = `${API_ROOT}/app`;
+const hasFirebaseConfig = [
+  import.meta.env.VITE_FIREBASE_API_KEY,
+  import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  import.meta.env.VITE_FIREBASE_APP_ID,
+].every(Boolean);
 
 function AuthModals({
   showLogin,
@@ -95,7 +105,7 @@ function AuthModals({
       // Create a copy of signupData and merge firstName/lastName into 'name' for backend compatibility if needed
       // Most backends expect a 'name' field.
       const payload = {
-        name: `${signupData.firstName} ${signupData.lastName}`.trim(),
+        fullname: `${signupData.firstName} ${signupData.lastName}`.trim(),
         email: signupData.email,
         password: signupData.password,
       };
@@ -119,22 +129,38 @@ function AuthModals({
       onSwitchToLogin();
     } catch (err) {
       console.error(err);
-      setError(err.message || "Something went wrong during sign up.");
+      if (err instanceof TypeError && err.message === "Failed to fetch") {
+        setError("Cannot reach backend. Ensure Spring Boot is running on http://localhost:8080.");
+      } else {
+        setError(err.message || "Something went wrong during sign up.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignIn = (e) => {
+  const handleGoogleSignIn = async (e) => {
     e.preventDefault();
-    console.log("Google Sign In");
-    const mockUser = {
-      email: "google.user@example.com",
-      fullname: "Google Explorer"
-    };
-    sessionStorage.setItem("email", mockUser.email);
-    sessionStorage.setItem("fullname", mockUser.fullname);
-    onLoginSuccess(mockUser);
+    setError("");
+    setLoading(true);
+
+    try {
+      const user = await signInWithGoogle();
+      const userData = {
+        email: user.email || "",
+        fullname: user.displayName || user.email || "Google User",
+      };
+
+      sessionStorage.setItem("email", userData.email);
+      sessionStorage.setItem("fullname", userData.fullname);
+      onLoginSuccess(userData);
+      onClose();
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Google sign-in failed. Check your Firebase config.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!showLogin && !showSignup) return null;
@@ -223,13 +249,16 @@ function AuthModals({
                 <span>OR</span>
               </div>
 
-              <button type="button" className="google-btn" onClick={handleGoogleSignIn}>
+              <button type="button" className="google-btn" onClick={handleGoogleSignIn} disabled={loading || !hasFirebaseConfig}>
                 <img
                   src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
                   alt="Google"
                 />
-                Continue with Google
+                {loading ? 'Signing in...' : 'Continue with Google'}
               </button>
+              {!hasFirebaseConfig && (
+                <p className="firebase-warning">Set the Firebase environment variables to enable Google sign-in.</p>
+              )}
 
               <p className="switch-auth">
                 Don't have an account?
@@ -357,13 +386,16 @@ function AuthModals({
                 <span>OR</span>
               </div>
 
-              <button className="google-btn" onClick={handleGoogleSignIn}>
+              <button className="google-btn" onClick={handleGoogleSignIn} disabled={loading || !hasFirebaseConfig}>
                 <img
                   src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
                   alt="Google"
                 />
-                Continue with Google
+                {loading ? 'Signing in...' : 'Continue with Google'}
               </button>
+              {!hasFirebaseConfig && (
+                <p className="firebase-warning">Set the Firebase environment variables to enable Google sign-in.</p>
+              )}
 
               <p className="switch-auth">
                 Already have an account?

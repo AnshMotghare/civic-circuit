@@ -38,6 +38,14 @@
   text-align: center;
 }
 
+.download-note {
+  margin: -0.75rem 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+  text-align: center;
+  line-height: 1.45;
+}
+
 .download-btn {
   background-color: transparent;
   color: #046a38;
@@ -56,15 +64,25 @@
   color: white;
 }
 
-.download-btn.started {
-  background-color: #046a38;
-  color: white;
-  border-color: #046a38;
-  border-bottom: 4px solid #da8d41; /* Orange alert border shown in Image 2 */
-  width: 100%; /* Expands to full width */
-  padding: 0.75rem 1rem;
-  font-size: 0.9rem;
-  transform: scale(1.02);
+.download-status {
+  margin: -0.5rem 0 0;
+  color: #046a38;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-align: center;
+  animation: downloadStatusIn 0.22s ease;
+}
+
+@keyframes downloadStatusIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .source-info {

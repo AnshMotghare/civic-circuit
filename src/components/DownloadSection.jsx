@@ -2,26 +2,34 @@ import React, { useState } from 'react'
 import './DownloadSection.css'
 
 function DownloadSection() {
+  const getPdfUrl = (fileName) => `${import.meta.env.BASE_URL}constitution/${fileName}`
+
   const languages = [
-    { name: 'English', native: 'English' },
-    { name: 'Bengali', native: 'বাংলা (Bengali)' },
-    { name: 'Hindi', native: 'हिंदी (Hindi)' },
-    { name: 'Tamil', native: 'தமிழ் (Tamil)' },
-    { name: 'Telugu', native: 'తెలుగు (Telugu)' },
-    { name: 'Marathi', native: 'मराठी (Marathi)' },
-    { name: 'Gujarati', native: 'ગુજરાતી (Gujarati)' },
-    { name: 'Sanskrit', native: 'संस्कृत (Sanskrit)' }
+    { name: 'English', native: 'English', pdfFile: 'english-constitution-of-india.pdf' },
+    { name: 'Bengali', native: 'বাংলা (Bengali)', pdfFile: 'the-constitution-of-india-bengali.pdf' },
+    { name: 'Hindi', native: 'हिंदी (Hindi)', pdfFile: 'hindi-constitution-of-india.pdf' },
+    { name: 'Tamil', native: 'தமிழ் (Tamil)', pdfFile: 'tamil-the-constitution-of-india.pdf' },
+    { name: 'Telugu', native: 'తెలుగు (Telugu)', pdfFile: 'telugu-the-constitution-of-india.pdf' },
+    { name: 'Marathi', native: 'मराठी (Marathi)', pdfFile: 'marathi-the-constitution-of-india-in-marathi.pdf' },
+    { name: 'Gujarati', native: 'ગુજરાતી (Gujarati)', pdfFile: 'the-constitution-of-india-gujarati.pdf' },
+    { name: 'Sanskrit', native: 'संस्कृत (Sanskrit)', pdfFile: 'the-constitution-of-india-sanskrit.pdf' }
   ]
 
-  const [clickedIndex, setClickedIndex] = useState(null)
+  const [downloadStatus, setDownloadStatus] = useState(null)
 
-  const handleDownload = (index) => {
-    setClickedIndex(index)
-    // Here we would typically trigger an actual download
-    // And reset after some time
+  const handleDownload = (index, lang) => {
+    setDownloadStatus({ index, message: 'Download started.' })
+
+    const link = document.createElement('a')
+    link.href = getPdfUrl(lang.pdfFile)
+    link.download = `${lang.name}-Constitution.pdf`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
     setTimeout(() => {
-      setClickedIndex(null)
-    }, 5000)
+      setDownloadStatus(null)
+    }, 2500)
   }
 
   return (
@@ -32,14 +40,15 @@ function DownloadSection() {
           {languages.map((lang, index) => (
             <div key={index} className="download-card">
               <h4>{lang.native}</h4>
-              <button 
-                className={`download-btn ${clickedIndex === index ? 'started' : ''}`}
-                onClick={() => handleDownload(index)}
+              <button
+                className="download-btn"
+                onClick={() => handleDownload(index, lang)}
               >
-                {clickedIndex === index 
-                  ? 'Download Started, if not click again on Download Button'
-                  : 'Download PDF'}
+                Download PDF
               </button>
+              {downloadStatus?.index === index && (
+                <p className="download-status">{downloadStatus.message}</p>
+              )}
             </div>
           ))}
         </div>

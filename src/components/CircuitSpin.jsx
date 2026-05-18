@@ -94,9 +94,11 @@ const CircuitSpin = ({ onClose }) => {
                 title: 'Finacials',
                 description: 'This topic will explain an important part of the Constitution in simple words.',
                 details: [
-                    'Details here will describe how government powers and duties are organised.',
-                    'This section will help you learn a constitutional idea through clear points.',
-                    'Here you will read useful information about how our system works in India.'
+                    '(Article 112): The Goverment presents an Annual Budget showing income and spending plans.',
+                    '(Article 266): Major goverment revenues are collected and kept in the Consolidated Fund.',
+                    '(Article 148): The CAG audits government accounts to ensure transparency and honesty.',
+                    '(Article 110): A Bill dealing only with taxes or money matters is called a Money Bill.'
+
                 ]
             }
         }

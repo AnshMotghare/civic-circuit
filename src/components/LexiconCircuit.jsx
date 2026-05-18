@@ -1,14 +1,19 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Footer from './Footer';
 import './LexiconCircuit.css';
 import bulbIcon from '../assets/Hint.png';
 
-// ── Word bank ──────────────────────────────────────────────────────────────────
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+
 const dictionary = [
-    { 
+    {
         word: 'GOVERNOR',
-        hint: 'Head of the State Government, appointed by the President.',
-        article: 'Articles 157–160',
+        hints: [
+            'Read the chapter about the State Executive first.',
+            'This office is appointed, not chosen by voters.',
+            'It is the highest office in the state government and works with the Chief Minister.'
+        ],
+        article: 'Articles 157-160',
         title: 'The Governor',
         description: (
             <>
@@ -24,7 +29,11 @@ const dictionary = [
     },
     {
         word: 'JUDGES',
-        hint: 'Officials who preside over courts and administer justice.',
+        hints: [
+            'Read the part about courts and how disputes are settled.',
+            'These people sit on the bench and decide cases.',
+            'They interpret the law and deliver justice in the courtroom.'
+        ],
         article: 'Articles 124 & 217',
         title: 'The Judiciary (Judges)',
         description: (
@@ -40,8 +49,12 @@ const dictionary = [
     },
     {
         word: 'PRESIDENT',
-        hint: 'The constitutional head of the Union Executive of India.',
-        article: 'Articles 52–58',
+        hints: [
+            'Read the section about the Union Executive first.',
+            'This office is the formal head of the country, not the daily administrator.',
+            'It is the top constitutional authority at the Union level.'
+        ],
+        article: 'Articles 52-58',
         title: 'The President',
         description: (
             <>
@@ -57,7 +70,11 @@ const dictionary = [
     },
     {
         word: 'MINISTER',
-        hint: 'Member of the Council of Ministers who aids the President.',
+        hints: [
+            'Read the part about the Council that helps run the country.',
+            'This role belongs to the team that advises the executive.',
+            'It is one of the people who assist in running the government.'
+        ],
         article: 'Articles 74 & 75',
         title: 'Council of Ministers',
         description: (
@@ -73,7 +90,11 @@ const dictionary = [
     },
     {
         word: 'JUDICIARY',
-        hint: 'The system of courts that interprets and applies the law.',
+        hints: [
+            'Read the part about the branch that settles disputes.',
+            'It checks whether laws are applied properly.',
+            'This branch interprets the Constitution and protects rights.'
+        ],
         article: 'Part V, Ch. IV',
         title: 'The Independent Judiciary',
         description: (
@@ -85,15 +106,19 @@ const dictionary = [
     },
     {
         word: 'LEGISLATURE',
-        hint: 'The law-making body of the government.',
+        hints: [
+            'Read the chapter about making laws in a state.',
+            'Bills are discussed here before they become law.',
+            'This is the law-making body of the government.'
+        ],
         article: 'Articles 168 & 173',
         title: 'State Legislature',
         description: (
             <>
                 <strong>Article 168</strong> says that every Indian State must have a Legislature along with a Governor. A State Legislature can be of two types:
                 <ol>
-                    <li><strong>Unicameral (One House):</strong><br/>The state has only the Legislative Assembly (Vidhan Sabha).</li>
-                    <li><strong>Bicameral (Two Houses):</strong><br/>The state has both the Legislative Assembly (Vidhan Sabha) and the Legislative Council (Vidhan Parishad). Only a few states have two houses today, such as Uttar Pradesh, Maharashtra, and Bihar.</li>
+                    <li><strong>Unicameral (One House):</strong><br />The state has only the Legislative Assembly (Vidhan Sabha).</li>
+                    <li><strong>Bicameral (Two Houses):</strong><br />The state has both the Legislative Assembly (Vidhan Sabha) and the Legislative Council (Vidhan Parishad). Only a few states have two houses today, such as Uttar Pradesh, Maharashtra, and Bihar.</li>
                 </ol>
                 <strong>Article 173</strong> explains who can become a member of a State Legislature. A person must:
                 <ol>
@@ -106,7 +131,11 @@ const dictionary = [
     },
     {
         word: 'EXECUTIVE',
-        hint: 'The branch of government that executes and enforces laws.',
+        hints: [
+            'Read the part about how government decisions are carried out.',
+            'This branch handles administration, not law-making.',
+            'It puts laws and policies into action.'
+        ],
         article: 'Part V, Ch. I',
         title: 'The Executive Branch',
         description: (
@@ -119,7 +148,11 @@ const dictionary = [
     },
     {
         word: 'CONSTITUTION',
-        hint: 'The supreme law of India, adopted on 26th November 1949.',
+        hints: [
+            'Read the document that begins with the Preamble.',
+            'It is the main source of rules for how the country is governed.',
+            'It explains how power is shared between institutions.'
+        ],
         article: 'Preamble',
         title: 'The Constitution of India',
         description: (
@@ -131,8 +164,12 @@ const dictionary = [
     },
     {
         word: 'SECULARISM',
-        hint: 'Equal treatment of all religions by the state.',
-        article: 'Articles 25–28',
+        hints: [
+            'Read the idea that appears in the Preamble with equality in mind.',
+            'It asks the state to stay neutral among religions.',
+            'It means the government should treat all faiths with equal respect.'
+        ],
+        article: 'Articles 25-28',
         title: 'Secularism in India',
         description: (
             <>
@@ -148,10 +185,9 @@ const dictionary = [
     }
 ];
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
 const shuffleArray = (arr) => {
     const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
+    for (let i = a.length - 1; i > 0; i -= 1) {
         const j = Math.floor(Math.random() * (i + 1));
         [a[i], a[j]] = [a[j], a[i]];
     }
@@ -164,94 +200,193 @@ const makeTiles = (word) => {
         tiles = shuffleArray(
             word.split('').map((letter, i) => ({ letter, id: i, used: false }))
         );
-    } while (tiles.map(t => t.letter).join('') === word);
+    } while (tiles.map((t) => t.letter).join('') === word && word.length > 1);
     return tiles;
 };
 
-// ── Component ─────────────────────────────────────────────────────────────────
+const normalizeWord = (word) => (word || '').trim().toUpperCase();
+
 const LexiconCircuit = ({ onClose }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [tiles, setTiles]               = useState(() => makeTiles(dictionary[0].word));
-    const [usedOrder, setUsedOrder]       = useState([]);
-    const [feedback, setFeedback]         = useState(null); // null | 'correct' | 'wrong'
-    const [showHint, setShowHint]         = useState(false);
+    const [tiles, setTiles] = useState(() => makeTiles(dictionary[0].word));
+    const [usedOrder, setUsedOrder] = useState([]);
+    const [feedback, setFeedback] = useState(null);
+    const [showHint, setShowHint] = useState(false);
+    const [hintCount, setHintCount] = useState(0);
+    const [activeHintIndex, setActiveHintIndex] = useState(0);
     const [gameComplete, setGameComplete] = useState(false);
+    const [apiWord, setApiWord] = useState('');
+    const [apiArticles, setApiArticles] = useState([]);
+    const [selectedArticle, setSelectedArticle] = useState(null);
+    const [loadingApi, setLoadingApi] = useState(false);
+    const [totalSubmissions, setTotalSubmissions] = useState(0);
+    const [correctSubmissions, setCorrectSubmissions] = useState(0);
 
     const currentItem = dictionary[currentIndex];
-    const answer = usedOrder.map(id => tiles.find(t => t.id === id)?.letter ?? '').join('');
+    const activeWord = apiWord || currentItem.word;
+    const answer = usedOrder.map((id) => tiles.find((t) => t.id === id)?.letter ?? '').join('');
+    const hintLimit = 3;
+    const currentHint = currentItem.hints[Math.min(activeHintIndex, currentItem.hints.length - 1)] || '';
+    const hintsUsedLabel = `You have used ${hintCount} hint${hintCount === 1 ? '' : 's'} of ${hintLimit}.`;
 
-    // ── Load new word ──────────────────────────────────────────────────────────
-    const loadWord = useCallback((index) => {
-        setTiles(makeTiles(dictionary[index].word));
+    const loadWord = useCallback(async (index) => {
+        const fallbackWord = normalizeWord(dictionary[index].word);
+
+        setLoadingApi(true);
+        setApiWord('');
+        setApiArticles([]);
+        setSelectedArticle(null);
+        setTiles(makeTiles(fallbackWord));
         setUsedOrder([]);
         setFeedback(null);
         setShowHint(false);
+        setHintCount(0);
+        setActiveHintIndex(0);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/lexicon/${index + 1}`);
+            if (!response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+            const fetchedWord = normalizeWord(data?.word);
+            const fetchedArticles = Array.isArray(data?.articles) ? data.articles : [];
+
+            if (fetchedWord) {
+                setApiWord(fetchedWord);
+                setTiles(makeTiles(fetchedWord));
+            }
+
+            setApiArticles(fetchedArticles);
+        } catch {
+            // Keep dictionary-based gameplay if API is unavailable.
+        } finally {
+            setLoadingApi(false);
+        }
     }, []);
 
-    // ── Use a tile (mark used, append to answer) ───────────────────────────────
+    useEffect(() => {
+        loadWord(currentIndex);
+    }, [currentIndex, loadWord]);
+
     const useTile = (tile) => {
-        if (tile.used || feedback === 'correct') return;
-        setTiles(prev => prev.map(t => t.id === tile.id ? { ...t, used: true } : t));
-        setUsedOrder(prev => [...prev, tile.id]);
-        if (feedback === 'wrong') setFeedback(null);
+        if (tile.used || feedback === 'correct') {
+            return;
+        }
+        setTiles((prev) => prev.map((t) => (t.id === tile.id ? { ...t, used: true } : t)));
+        setUsedOrder((prev) => [...prev, tile.id]);
+        if (feedback === 'wrong') {
+            setFeedback(null);
+        }
     };
 
-    // ── Backspace ──────────────────────────────────────────────────────────────
     const handleBackspace = useCallback(() => {
-        if (usedOrder.length === 0 || feedback === 'correct') return;
+        if (usedOrder.length === 0 || feedback === 'correct') {
+            return;
+        }
         const lastId = usedOrder[usedOrder.length - 1];
-        setTiles(prev => prev.map(t => t.id === lastId ? { ...t, used: false } : t));
-        setUsedOrder(prev => prev.slice(0, -1));
+        setTiles((prev) => prev.map((t) => (t.id === lastId ? { ...t, used: false } : t)));
+        setUsedOrder((prev) => prev.slice(0, -1));
         setFeedback(null);
     }, [usedOrder, feedback]);
 
-    // ── Clear all ──────────────────────────────────────────────────────────────
     const handleClear = () => {
-        setTiles(prev => prev.map(t => ({ ...t, used: false })));
+        setTiles((prev) => prev.map((t) => ({ ...t, used: false })));
         setUsedOrder([]);
         setFeedback(null);
     };
 
-    // ── Next Word ─────────────────────────────────────────────────────────────
+    const handleShowHint = () => {
+        if (hintCount >= hintLimit) {
+            return;
+        }
+
+        const nextHintCount = hintCount + 1;
+        setHintCount(nextHintCount);
+        setActiveHintIndex(nextHintCount - 1);
+        setShowHint(true);
+    };
+
     const handleNextWord = useCallback(() => {
         const next = currentIndex + 1;
         if (next >= dictionary.length) {
+            const email = sessionStorage.getItem('email');
+            if (email) {
+                fetch(`${API_BASE_URL}/lexicon/complete/${encodeURIComponent(email)}`, {
+                    method: 'POST'
+                }).catch(() => {
+                    // Completion tracking failure should not block UI.
+                });
+            }
             setGameComplete(true);
         } else {
             setCurrentIndex(next);
-            loadWord(next);
         }
-    }, [currentIndex, loadWord]);
+    }, [currentIndex]);
 
-    // ── Submit ─────────────────────────────────────────────────────────────────
+    const trackLexiconAttempt = useCallback(async (isCorrect) => {
+        const email = sessionStorage.getItem('email');
+        if (!email) {
+            return;
+        }
+
+        try {
+            await fetch(`${API_BASE_URL}/lexicon/track/${encodeURIComponent(email)}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ correct: isCorrect })
+            });
+        } catch {
+            // Tracking must not block gameplay.
+        }
+    }, []);
+
     const handleSubmit = useCallback(() => {
-        if (answer.length !== currentItem.word.length || feedback === 'correct') return;
-        if (answer === currentItem.word) {
+        if (answer.length !== activeWord.length || feedback === 'correct') {
+            return;
+        }
+
+        setTotalSubmissions((prev) => prev + 1);
+
+        if (answer.toLowerCase() === activeWord.toLowerCase()) {
             setFeedback('correct');
+            trackLexiconAttempt(true);
+            setCorrectSubmissions((prev) => prev + 1);
+
+            if (apiArticles.length > 0) {
+                const randomIndex = Math.floor(Math.random() * apiArticles.length);
+                setSelectedArticle(apiArticles[randomIndex]);
+            } else {
+                setSelectedArticle(null);
+            }
         } else {
             setFeedback('wrong');
+            setSelectedArticle(null);
+            trackLexiconAttempt(false);
         }
-    }, [answer, currentItem, feedback]);
+    }, [answer, activeWord, feedback, apiArticles, trackLexiconAttempt]);
 
-    // ── Handle real keyboard typing via onChange ────────────────────────────
     const handleInputChange = (e) => {
-        if (feedback === 'correct') return;
+        if (feedback === 'correct') {
+            return;
+        }
 
-        // Strip non-letters, uppercase
         const newVal = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
 
         if (newVal.length > answer.length) {
-            // A letter was added — find the first unused matching tile
             const addedChar = newVal[answer.length];
-            const matchTile = tiles.find(t => !t.used && t.letter === addedChar);
-            if (matchTile) useTile(matchTile);
+            const matchTile = tiles.find((t) => !t.used && t.letter === addedChar);
+            if (matchTile) {
+                useTile(matchTile);
+            }
         } else if (newVal.length < answer.length) {
-            // Backspace pressed
             handleBackspace();
         }
     };
 
-    // Only intercept Enter (submit) — let onChange handle everything else
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -263,18 +398,21 @@ const LexiconCircuit = ({ onClose }) => {
         }
     };
 
-    // ── Restart ────────────────────────────────────────────────────────────────
     const handleRestart = () => {
         setCurrentIndex(0);
         setGameComplete(false);
-        loadWord(0);
+        setTotalSubmissions(0);
+        setCorrectSubmissions(0);
+        setHintCount(0);
+        setActiveHintIndex(0);
     };
 
-    // ─────────────────────────────────────────────────────────────────────────
+    const completionAccuracy = totalSubmissions === 0
+        ? 0
+        : Math.round((correctSubmissions / totalSubmissions) * 100);
+
     return (
         <div className="lexicon-container">
-
-            {/* ── Header ── */}
             <div className="dashboard-header">
                 <div className="container">
                     <div className="dashboard-header-content">
@@ -290,8 +428,6 @@ const LexiconCircuit = ({ onClose }) => {
             </div>
 
             <main className="lexicon-main">
-
-                {/* ── Title Pill ── */}
                 <div className="lexicon-title-section">
                     <div className="lexicon-title-pill">
                         <span>Lexicon Circuit</span>
@@ -299,19 +435,22 @@ const LexiconCircuit = ({ onClose }) => {
                     <p className="lexicon-subtitle">Unscramble the letters to form the correct civic term!</p>
                 </div>
 
-                {/* ── Game Complete ── */}
                 {gameComplete ? (
                     <div className="lexicon-game-area">
                         <div className="game-complete">
                             <div className="game-complete-icon">🎉</div>
                             <h2>Congratulations!</h2>
                             <p>You have mastered the Civic Lexicon!</p>
+                            <div className="lexicon-complete-stats">
+                                <p><strong>Correct Words:</strong> {correctSubmissions}</p>
+                                <p><strong>Total Submissions:</strong> {totalSubmissions}</p>
+                                <p><strong>Accuracy:</strong> {completionAccuracy}%</p>
+                            </div>
                             <button className="restart-btn" onClick={handleRestart}>Play Again</button>
                         </div>
                     </div>
                 ) : (
                     <>
-                        {/* ── Progress Bar ── */}
                         <div className="lexicon-progress-bar-container">
                             <div
                                 className="lexicon-progress-bar"
@@ -323,27 +462,28 @@ const LexiconCircuit = ({ onClose }) => {
                         </div>
 
                         <div className="lexicon-game-area">
-
-                            {/* Word counter */}
                             <div className="word-number-badge">
                                 Word {currentIndex + 1} of {dictionary.length}
                             </div>
 
-                            {/* ── Scrambled Tiles + Hint bulb inline ── */}
+                            {loadingApi && (
+                                <div className="article-badge">Syncing word from API...</div>
+                            )}
+
                             <div className="tiles-section">
                                 <div className="tiles-label-row">
                                     <p className="tiles-label">Scrambled Letters:</p>
                                     <button
-                                        className={`hint-bulb-btn ${showHint ? 'hint-bulb-btn--active' : ''}`}
-                                        onClick={() => setShowHint(true)}
-                                        title="Show hint"
-                                        disabled={feedback === 'correct'}
+                                        className={`hint-bulb-btn ${showHint ? 'hint-bulb-btn--active' : ''} ${hintCount >= hintLimit ? 'hint-bulb-btn--spent' : ''}`}
+                                        onClick={handleShowHint}
+                                        title={hintCount >= hintLimit ? 'No hints left' : 'Use hint'}
+                                        disabled={feedback === 'correct' || hintCount >= hintLimit}
                                     >
                                         <img src={bulbIcon} alt="Hint" className="hint-bulb-img" />
                                     </button>
                                 </div>
                                 <div className="letter-tiles">
-                                    {tiles.map(tile => (
+                                    {tiles.map((tile) => (
                                         <button
                                             key={tile.id}
                                             className={`letter-tile ${tile.used ? 'letter-tile--used' : ''}`}
@@ -357,7 +497,6 @@ const LexiconCircuit = ({ onClose }) => {
                                 </div>
                             </div>
 
-                            {/* ── Typed Answer Input ── */}
                             <div className="answer-section">
                                 <p className="answer-label">Your Answer:</p>
                                 <div className="answer-input-row">
@@ -366,12 +505,12 @@ const LexiconCircuit = ({ onClose }) => {
                                         className={[
                                             'lexicon-input',
                                             feedback === 'correct' ? 'lexicon-input--correct' : '',
-                                            feedback === 'wrong'   ? 'lexicon-input--wrong'   : '',
+                                            feedback === 'wrong' ? 'lexicon-input--wrong' : ''
                                         ].join(' ')}
                                         value={answer}
                                         onChange={handleInputChange}
                                         onKeyDown={handleKeyDown}
-                                        placeholder={`Type ${currentItem.word.length} letters…`}
+                                        placeholder={`Type ${activeWord.length} letters...`}
                                         disabled={feedback === 'correct'}
                                         autoFocus
                                         autoComplete="off"
@@ -388,27 +527,33 @@ const LexiconCircuit = ({ onClose }) => {
                                 </div>
                             </div>
 
-                            {/* ── Feedback Banner ── */}
                             {feedback === 'wrong' && (
                                 <div className="feedback-banner feedback-banner--wrong">
-                                    Wrong Word... Try Again...
+                                    Incorrect! Try again.
                                 </div>
                             )}
                             {feedback === 'correct' && (
                                 <div className="feedback-container">
                                     <div className="feedback-banner feedback-banner--correct">
-                                        ✓ Correct! Read the details below and click Next Word.
+                                        Correct! Read the details below and click Next Word.
                                     </div>
                                     <div className="lexicon-info-card">
-                                        <h4 className="lexicon-info-card-title">{currentItem.title || currentItem.word}</h4>
+                                        <h4 className="lexicon-info-card-title">{currentItem.title || activeWord}</h4>
                                         <div className="lexicon-info-card-content">
                                             {currentItem.description}
+                                            {selectedArticle && (
+                                                <>
+                                                    <hr />
+                                                    <p><strong>Related Article:</strong> {selectedArticle.atitle}</p>
+                                                    <p><strong>Article Number:</strong> {selectedArticle.anumber}</p>
+                                                    <p>{selectedArticle.adesc}</p>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
                             )}
 
-                            {/* ── Submit / Next Word ── */}
                             <div className="game-bottom-row">
                                 {feedback === 'correct' ? (
                                     <button
@@ -422,37 +567,25 @@ const LexiconCircuit = ({ onClose }) => {
                                     <button
                                         className="submit-btn submit-btn--solid"
                                         onClick={handleSubmit}
-                                        disabled={
-                                            answer.length !== currentItem.word.length ||
-                                            feedback === 'wrong'
-                                        }
+                                        disabled={answer.length !== activeWord.length || feedback === 'wrong'}
                                     >
                                         Submit
                                     </button>
                                 )}
                             </div>
-
                         </div>
                     </>
                 )}
-
             </main>
 
-            {/* ── Hint Modal ── */}
             {showHint && (
                 <div className="hint-modal-overlay" onClick={() => setShowHint(false)}>
-                    <div className="hint-modal" onClick={e => e.stopPropagation()}>
+                    <div className="hint-modal" onClick={(e) => e.stopPropagation()}>
                         <button className="hint-modal-close" onClick={() => setShowHint(false)}>✕</button>
                         <div className="hint-modal-bulb">💡</div>
-                        <h3 className="hint-modal-title">Hint</h3>
-                        <p className="hint-modal-text">{currentItem.hint}</p>
-                        {currentItem.article && (
-                            <p className="hint-modal-article">{currentItem.article}</p>
-                        )}
-                        <div className="hint-modal-meta">
-                            <span>First letter: <strong>{currentItem.word[0]}</strong></span>
-                            <span>Length: <strong>{currentItem.word.length} letters</strong></span>
-                        </div>
+                        <h3 className="hint-modal-title">Hint {hintCount} of {hintLimit}</h3>
+                        <p className="hint-modal-text">{currentHint}</p>
+                        <p className="hint-modal-usage">{hintsUsedLabel}</p>
                     </div>
                 </div>
             )}
@@ -460,8 +593,8 @@ const LexiconCircuit = ({ onClose }) => {
             <Footer
                 onNavigateHome={onClose}
                 onNavigateDashboard={onClose}
-                onNavigateSupport={(section) => { window.location.href = '/support#' + section; }}
-                isLoggedIn={true}
+                onNavigateSupport={(section) => { window.location.href = `/support#${section}`; }}
+                isLoggedIn
             />
         </div>
     );

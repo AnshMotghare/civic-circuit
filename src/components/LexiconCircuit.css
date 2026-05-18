@@ -435,8 +435,8 @@
 .hint-bulb-btn {
     width: 52px;
     height: 52px;
-    background: transparent;
-    border: none;
+    background: #fff;
+    border: 1.5px solid #cbd5e1;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -444,7 +444,7 @@
     justify-content: center;
     padding: 4px;
     transition: all 0.2s ease;
-    filter: drop-shadow(0 2px 6px rgba(4, 106, 56, 0.3));
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
     flex-shrink: 0;
 }
 
@@ -456,18 +456,24 @@
 }
 
 .hint-bulb-btn:hover:not(:disabled) {
-    filter: drop-shadow(0 4px 12px rgba(4, 106, 56, 0.55));
+    border-color: #0b0b8c;
+    box-shadow: 0 4px 14px rgba(11, 11, 140, 0.15);
     transform: scale(1.12);
 }
 
 .hint-bulb-btn--active {
-    filter: drop-shadow(0 4px 14px rgba(249, 115, 22, 0.5));
+    border-color: #046a38;
+    box-shadow: 0 4px 14px rgba(4, 106, 56, 0.18);
+}
+
+.hint-bulb-btn--spent {
+    opacity: 0.55;
 }
 
 .hint-bulb-btn:disabled {
     opacity: 0.35;
     cursor: not-allowed;
-    filter: none;
+    box-shadow: none;
     transform: none;
 }
 
@@ -527,14 +533,15 @@
 }
 
 .hint-modal {
-    background: linear-gradient(145deg, #046a38, #0d9653);
-    color: white;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
     border-radius: 20px;
     padding: 2.5rem 2rem 2rem;
     max-width: 420px;
     width: 100%;
     position: relative;
-    box-shadow: 0 25px 60px rgba(4, 106, 56, 0.4);
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.2);
     text-align: center;
     animation: modalPop 0.25s ease;
 }
@@ -548,12 +555,12 @@
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background: rgba(255, 255, 255, 0.2);
+    background: #eff6ff;
     border: none;
     border-radius: 50%;
     width: 30px;
     height: 30px;
-    color: white;
+    color: #0b0b8c;
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
@@ -564,7 +571,7 @@
 }
 
 .hint-modal-close:hover {
-    background: rgba(255, 255, 255, 0.35);
+    background: #dbeafe;
 }
 
 .hint-modal-bulb {
@@ -577,39 +584,21 @@
     font-weight: 800;
     margin: 0 0 0.75rem;
     letter-spacing: 0.03em;
+    color: #0b0b8c;
 }
 
 .hint-modal-text {
     font-size: 1.05rem;
     line-height: 1.6;
     margin: 0 0 0.6rem;
-    color: rgba(255, 255, 255, 0.95);
+    color: #1e293b;
 }
 
-.hint-modal-article {
-    font-size: 0.9rem;
+.hint-modal-usage {
+    margin: 0 0 0.9rem;
+    color: #046a38;
+    font-size: 0.95rem;
     font-weight: 700;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 999px;
-    display: inline-block;
-    padding: 0.3rem 1rem;
-    margin: 0.5rem 0 1rem;
-    letter-spacing: 0.05em;
-}
-
-.hint-modal-meta {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
-    font-size: 0.88rem;
-    color: rgba(255, 255, 255, 0.85);
-}
-
-.hint-modal-meta strong {
-    color: #fff;
-    font-weight: 800;
 }
 
 /* ==============================
@@ -637,6 +626,22 @@
     color: #64748b;
     font-size: 1.05rem;
     margin-bottom: 2rem;
+}
+
+.lexicon-complete-stats {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin: 0 auto 1.5rem;
+    max-width: 320px;
+    text-align: left;
+}
+
+.lexicon-complete-stats p {
+    margin: 0.35rem 0;
+    color: #1e293b;
+    font-size: 0.95rem;
 }
 
 .restart-btn {
