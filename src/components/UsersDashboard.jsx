@@ -14,6 +14,7 @@ const getLearnerLevel = (points) => {
 
 function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSelect, onStartQuiz, onStartSpinWheel, onStartLexicon }) {
   const API_ROOT = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+  const ANTHROPIC_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY || ''
   const storedFullname = sessionStorage.getItem('fullname') || ''
   const storedEmail = sessionStorage.getItem('email') || ''
   const displayNameOverride = storedEmail ? (localStorage.getItem(`displayName_${storedEmail}`) || '') : ''
@@ -28,16 +29,12 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
 
   useEffect(() => {
     const email = sessionStorage.getItem('email')
-    if (!email) {
-      return
-    }
+    if (!email) return
 
     const fetchUserStats = async () => {
       try {
         const response = await fetch(`${API_ROOT}/app/user/${encodeURIComponent(email)}`)
-        if (!response.ok) {
-          return
-        }
+        if (!response.ok) return
 
         const data = await response.json()
         const overallAccuracy = Number(data.accuracyRate || 0)
@@ -72,7 +69,12 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
       try {
         const response = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': ANTHROPIC_KEY,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
           body: JSON.stringify({
             model: 'claude-sonnet-4-20250514',
             max_tokens: 300,
@@ -100,7 +102,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     }
 
     fetchFact()
-  }, [])
+  }, [ANTHROPIC_KEY])
 
   const totalPoints = Math.max(0, userStats.factor * POINTS_PER_CORRECT_ANSWER)
   const learnerLevel = getLearnerLevel(totalPoints)
@@ -108,7 +110,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
   const learningModules = [
     {
       id: 'executive',
-      image: 'src/assets/Executive.png',
+      image: '/assets/Executive.png',
       title: 'The Executive (Union Level)',
       articles: 'Articles 52-78',
       description: 'Learn about the President, Vice President, Prime Minister, and Council of Ministers who run the Union Government.',
@@ -119,7 +121,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'parliament',
-      image: 'src/assets/legislature.png.jpg',
+      image: '/assets/legislature.png.jpg',
       title: 'The Parliament',
       articles: 'Articles 79-122',
       description: 'Explore how Lok Sabha and Rajya Sabha work, how laws are made, and the powers of Parliament in India.',
@@ -130,7 +132,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'powers',
-      image: 'src/assets/legislative-power.png.jpg',
+      image: '/assets/legislative-power.png.jpg',
       title: 'Legislative Powers',
       articles: 'Articles 123-151',
       description: "Discover Presidential ordinances, parliamentary privileges, the Supreme Court's role, and the powers of the CAG.",
@@ -141,7 +143,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'state-executive',
-      image: 'src/assets/state-executive.png.jpg',
+      image: '/assets/state-executive.png.jpg',
       title: 'The State Executive',
       articles: 'Articles 152-167',
       description: "Understand the Governor's role, Chief Minister's leadership, and how the State Executive functions.",
@@ -152,7 +154,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'state-legislature',
-      image: 'src/assets/State.png',
+      image: '/assets/State.png',
       title: 'The State Legislature',
       articles: 'Articles 168-212',
       description: 'Learn about the State Legislative Assembly and Council, their powers, and how state laws are created.',
@@ -163,7 +165,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'judiciary',
-      image: 'src/assets/state-legislative.png.jpg',
+      image: '/assets/state-legislative.png.jpg',
       title: 'State Judiciary',
       articles: 'Articles 213-237',
       description: "Study the structure and powers of High Courts, Subordinate Courts, and the Governor's ordinance powers.",
@@ -174,11 +176,10 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     }
   ]
 
-
   const games = [
     {
       id: 'knowledge-quest',
-      image: 'src/assets/knowledge-quest.png.jpg',
+      image: '/assets/knowledge-quest.png.jpg',
       title: 'Quiz Circuit',
       subtitle: 'Quiz Game Mode',
       description: "Test your understanding of India's Legislature, Executive, and Judiciary through structured quizzes.",
@@ -187,16 +188,12 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
         'In-depth understanding of Parts V and VI',
         'Practical application of constitutional principles'
       ],
-      features: [
-        'Question Progression',
-        'Score Tracking',
-        'Complete Coverage'
-      ],
+      features: ['Question Progression', 'Score Tracking', 'Complete Coverage'],
       buttonText: 'Play Quiz Circuit'
     },
     {
       id: 'lexicon-circuit',
-      image: 'src/assets/Word Game Icon.png',
+      image: '/assets/Word Game Icon.png',
       title: 'Lexicon Circuit',
       subtitle: 'Constitution Word Game',
       description: 'Match constitutional terms with their meanings, articles with their concepts, and institutions with their roles',
@@ -205,16 +202,12 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
         'Recognizing important articles and concepts',
         'Improving recall through word association'
       ],
-      features: [
-        'Letter-based word formation',
-        'Level Progression',
-        'Concept Focus'
-      ],
+      features: ['Letter-based word formation', 'Level Progression', 'Concept Focus'],
       buttonText: 'Play Lexicon Circuit'
     },
     {
       id: 'spin-wheel',
-      image: 'src/assets/spin-wheel.png.jpg',
+      image: '/assets/spin-wheel.png.jpg',
       title: 'Circuit Spin',
       subtitle: 'Spin to Explore Constitutional Topics',
       description: 'Spin the wheel to unlock constitutional categories and explore related articles, institutions, and key provisions.',
@@ -223,36 +216,21 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
         'View all articles linked to that category',
         'Learn concepts in a structured, visual way'
       ],
-      features: [
-        'Rights, Duties, and Procedures',
-        'Constitutional Articles',
-        'Institutions & Powers'
-      ],
+      features: ['Rights, Duties, and Procedures', 'Constitutional Articles', 'Institutions & Powers'],
       buttonText: 'Spin the Circuit'
     }
   ]
 
-  const handleNavigateSupport = () => {
-    console.log('Navigate to support')
-  }
-
-  // ADDED: Handle game button clicks
   const handleGameButtonClick = (game) => {
-    if (game.id === 'knowledge-quest') {
-      onStartQuiz()
-    } else if (game.id === 'spin-wheel') {
-      onStartSpinWheel()
-    } else if (game.id === 'lexicon-circuit') {
-      onStartLexicon()
-    } else {
-      console.log(`${game.title} - Coming Soon!`)
-    }
+    if (game.id === 'knowledge-quest') onStartQuiz()
+    else if (game.id === 'spin-wheel') onStartSpinWheel()
+    else if (game.id === 'lexicon-circuit') onStartLexicon()
+    else console.log(`${game.title} - Coming Soon!`)
   }
 
   const handleSaveDisplayName = () => {
     const name = (nameInput || '').trim()
     if (!name) return
-
     if (storedEmail) {
       localStorage.setItem(`displayName_${storedEmail}`, name)
       sessionStorage.setItem('fullname', name)
@@ -270,9 +248,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
             <h1 className="dashboard-logo" onClick={onNavigateHome} style={{ cursor: 'pointer' }}>
               Civic Circuit <span className="learning-badge">Learning Dashboard</span>
             </h1>
-            <nav className="dashboard-nav">
-              {/* Removed Home and Support links per user request */}
-            </nav>
+            <nav className="dashboard-nav"></nav>
             <div className="user-section">
               <span className="username"> {sessionStorage.getItem("email") || "Guest"}</span>
               <button className="logout-btn" onClick={onLogout}>Log Out</button>
@@ -281,11 +257,9 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
         </div>
       </div>
 
-
       {/* Welcome Section with Gradient Banner */}
       <section className="welcome-section">
         <div className="container">
-          {/* Gradient Welcome Banner */}
           <div className="welcome-banner-gradient">
             <h2>{isFirstTime ? `Welcome, ${displayName}!` : `Welcome back, ${displayName}!`}</h2>
             <p>Ready to continue your constitutional learning journey? You're making great progress!</p>
@@ -312,8 +286,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
             </div>
           </div>
 
-
-          {/* Stats Cards Below Banner */}
+          {/* Stats Cards */}
           <div className="stats-grid-dash">
             <div className="stat-card-dash">
               <div className="stat-card-header">
@@ -322,8 +295,6 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
               </div>
               <p className="stat-value">{userStats.gamesCompleted}</p>
             </div>
-
-
             <div className="stat-card-dash">
               <div className="stat-card-header">
                 <h4>Accuracy Rate</h4>
@@ -333,13 +304,12 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
             </div>
           </div>
 
-
           {/* Fact of the Day */}
           <div className="fact-of-the-day-new">
             <div className="fact-icon-container">
-              <img 
-                src="/assets/bulb-idea-light_svgrepo.com (1).png" 
-                alt="Idea Icon" 
+              <img
+                src="/assets/bulb-idea-light_svgrepo.com (1).png"
+                alt="Idea Icon"
                 className="fact-icon-svg-new"
               />
             </div>
@@ -366,7 +336,6 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
         </div>
       </section>
 
-
       {/* GAMES SECTION */}
       <section className="games-section">
         <div className="container">
@@ -374,17 +343,12 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
           <div className="games-grid">
             {games.map((game, index) => (
               <div key={index} className="game-card">
-                {/* Game Image */}
                 <div className="game-image-container">
                   <img src={game.image} alt={game.title} className="game-image" />
                 </div>
-
-
                 <h3 className="game-title">{game.title}</h3>
                 <p className="game-subtitle">{game.subtitle}</p>
                 <p className="game-description">{game.description}</p>
-
-
                 <div className="game-objectives">
                   <p className="objectives-title">Learning Objectives:</p>
                   {game.objectives.map((objective, idx) => (
@@ -394,20 +358,12 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
                     </p>
                   ))}
                 </div>
-
-
                 <div className="game-features">
                   {game.features.map((feature, idx) => (
                     <span key={idx} className="feature-tag">{feature}</span>
                   ))}
                 </div>
-
-
-                {/* UPDATED: Add onClick handler with game ID check */}
-                <button
-                  className="game-btn"
-                  onClick={() => handleGameButtonClick(game)}
-                >
+                <button className="game-btn" onClick={() => handleGameButtonClick(game)}>
                   {game.buttonText}
                 </button>
               </div>
@@ -416,7 +372,6 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
         </div>
       </section>
 
-
       {/* Learning Material */}
       <section className="learning-material-section">
         <div className="container">
@@ -424,30 +379,19 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
           <div className="modules-grid-dashboard">
             {learningModules.map((module, index) => (
               <div key={index} className="dashboard-card">
-                {/* Module Image */}
                 <div className="module-image-container">
                   <img src={module.image} alt={module.title} className="module-image" />
                 </div>
-
-
                 <h3>{module.title}</h3>
                 <p className="articles">{module.articles}</p>
                 <p className="description">{module.description}</p>
-
-
                 <div className="topics">
                   <p className="topics-title">Topics:</p>
                   {module.topics.map((topic, idx) => (
                     <p key={idx} className="topic-item">{topic}</p>
                   ))}
                 </div>
-
-
-                {/* UPDATED: Call onModuleSelect instead of opening modal */}
-                <button
-                  className="module-btn"
-                  onClick={() => onModuleSelect(module)}
-                >
+                <button className="module-btn" onClick={() => onModuleSelect(module)}>
                   {module.buttonText}
                 </button>
               </div>
@@ -456,16 +400,14 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
         </div>
       </section>
 
-
-      <Footer 
+      <Footer
         onNavigateHome={onNavigateHome}
-        onNavigateDashboard={() => {}} // Already here
+        onNavigateDashboard={() => {}}
         onNavigateSupport={onNavigateSupport}
         isLoggedIn={true}
       />
     </div>
   )
 }
-
 
 export default UserDashboard
