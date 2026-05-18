@@ -23,6 +23,8 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
   const [nameInput, setNameInput] = useState(displayName)
   const isFirstTime = sessionStorage.getItem('firstTime') === 'true'
   const [showNamePrompt, setShowNamePrompt] = useState(isFirstTime && !displayNameOverride)
+  const [dailyFact, setDailyFact] = useState(null)
+  const [factLoading, setFactLoading] = useState(true)
 
   useEffect(() => {
     const email = sessionStorage.getItem('email')
@@ -55,13 +57,58 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     fetchUserStats()
   }, [API_ROOT])
 
+  useEffect(() => {
+    const today = new Date().toDateString()
+    const cached = localStorage.getItem('dailyFact')
+    const cachedDate = localStorage.getItem('dailyFactDate')
+
+    if (cached && cachedDate === today) {
+      setDailyFact(JSON.parse(cached))
+      setFactLoading(false)
+      return
+    }
+
+    const fetchFact = async () => {
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 300,
+            messages: [{
+              role: 'user',
+              content: `Generate a unique and interesting constitutional fact about the Indian Constitution. Respond ONLY in JSON with no extra text or markdown: {"category": "category name like Fundamental Rights or Directive Principles", "title": "Article XX - Short Title", "description": "2-3 sentence explanation of the article or fact", "highlight": "one interesting statistic or historical detail about it"}`
+            }]
+          })
+        })
+        const data = await response.json()
+        const fact = JSON.parse(data.content[0].text)
+        localStorage.setItem('dailyFact', JSON.stringify(fact))
+        localStorage.setItem('dailyFactDate', today)
+        setDailyFact(fact)
+      } catch {
+        setDailyFact({
+          category: 'Fundamental Rights',
+          title: 'Article 21 - Right to Life',
+          description: 'Article 21 of the Indian Constitution guarantees the Right to Life and Personal Liberty, which has been interpreted by the Supreme Court to include the right to a clean environment, privacy, and dignified life.',
+          highlight: 'This article has been the basis for over 50 landmark Supreme Court judgments expanding citizen rights.'
+        })
+      } finally {
+        setFactLoading(false)
+      }
+    }
+
+    fetchFact()
+  }, [])
+
   const totalPoints = Math.max(0, userStats.factor * POINTS_PER_CORRECT_ANSWER)
   const learnerLevel = getLearnerLevel(totalPoints)
 
   const learningModules = [
     {
       id: 'executive',
-      image: '/assets/Executive.png',
+      image: 'src/assets/Executive.png',
       title: 'The Executive (Union Level)',
       articles: 'Articles 52-78',
       description: 'Learn about the President, Vice President, Prime Minister, and Council of Ministers who run the Union Government.',
@@ -72,7 +119,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'parliament',
-      image: '/assets/legislature.png.jpg',
+      image: 'src/assets/legislature.png.jpg',
       title: 'The Parliament',
       articles: 'Articles 79-122',
       description: 'Explore how Lok Sabha and Rajya Sabha work, how laws are made, and the powers of Parliament in India.',
@@ -83,7 +130,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'powers',
-      image: '/assets/legislative-power.png.jpg',
+      image: 'src/assets/legislative-power.png.jpg',
       title: 'Legislative Powers',
       articles: 'Articles 123-151',
       description: "Discover Presidential ordinances, parliamentary privileges, the Supreme Court's role, and the powers of the CAG.",
@@ -94,7 +141,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'state-executive',
-      image: '/assets/state-executive.png.jpg',
+      image: 'src/assets/state-executive.png.jpg',
       title: 'The State Executive',
       articles: 'Articles 152-167',
       description: "Understand the Governor's role, Chief Minister's leadership, and how the State Executive functions.",
@@ -105,7 +152,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'state-legislature',
-      image: '/assets/State.png',
+      image: 'src/assets/State.png',
       title: 'The State Legislature',
       articles: 'Articles 168-212',
       description: 'Learn about the State Legislative Assembly and Council, their powers, and how state laws are created.',
@@ -116,7 +163,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'judiciary',
-      image: '/assets/state-legislative.png.jpg',
+      image: 'src/assets/state-legislative.png.jpg',
       title: 'State Judiciary',
       articles: 'Articles 213-237',
       description: "Study the structure and powers of High Courts, Subordinate Courts, and the Governor's ordinance powers.",
@@ -131,7 +178,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
   const games = [
     {
       id: 'knowledge-quest',
-      image: '/assets/knowledge-quest.png.jpg',
+      image: 'src/assets/knowledge-quest.png.jpg',
       title: 'Quiz Circuit',
       subtitle: 'Quiz Game Mode',
       description: "Test your understanding of India's Legislature, Executive, and Judiciary through structured quizzes.",
@@ -149,7 +196,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'lexicon-circuit',
-      image: '/assets/Word Game Icon.png',
+      image: 'src/assets/Word Game Icon.png',
       title: 'Lexicon Circuit',
       subtitle: 'Constitution Word Game',
       description: 'Match constitutional terms with their meanings, articles with their concepts, and institutions with their roles',
@@ -167,7 +214,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     },
     {
       id: 'spin-wheel',
-      image: '/assets/spin-wheel.png.jpg',
+      image: 'src/assets/spin-wheel.png.jpg',
       title: 'Circuit Spin',
       subtitle: 'Spin to Explore Constitutional Topics',
       description: 'Spin the wheel to unlock constitutional categories and explore related articles, institutions, and key provisions.',
@@ -299,15 +346,21 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
             <div className="fact-content-new">
               <div className="fact-header-new">
                 <h3>Constitutional Fact of the Day</h3>
-                <span className="fact-category-badge">Fundamental Rights</span>
+                {factLoading
+                  ? <span className="fact-category-badge">Loading...</span>
+                  : <span className="fact-category-badge">{dailyFact?.category}</span>
+                }
               </div>
-              <p className="fact-description-new">
-                Article 21 of the Indian Constitution guarantees the Right to Life and Personal Liberty, 
-                which has been interpreted by the Supreme Court to include the right to a clean environment, privacy, and dignified life.
-              </p>
-              <p className="fact-highlight-new">
-                This article has been the basis for over 50 landmark Supreme Court judgments expanding citizen rights.
-              </p>
+              {factLoading ? (
+                <p className="fact-description-new" style={{ opacity: 0.6 }}>Fetching today's constitutional fact...</p>
+              ) : (
+                <>
+                  <p className="fact-description-new">
+                    <strong>{dailyFact?.title}</strong> — {dailyFact?.description}
+                  </p>
+                  <p className="fact-highlight-new">{dailyFact?.highlight}</p>
+                </>
+              )}
             </div>
           </div>
         </div>
