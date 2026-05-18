@@ -6,7 +6,7 @@ function Games({ onStartQuiz, onStartSpinWheel, onStartLexicon, onOpenLogin, isL
       id: 'knowledge-quest',
       title: 'Quiz Circuit',
       subtitle: 'Quick Quiz Format',
-      image: '/src/assets/knowledge-quest.png.jpg',
+      image: '/assets/knowledge-quest.png.jpg',
       description: 'Test your constitutional knowledge with rapid-fire questions about Indian Constitution articles, institutions, and fundamental rights.',
       objectives: [
         'Quick recall of constitutional facts.',
@@ -24,7 +24,7 @@ function Games({ onStartQuiz, onStartSpinWheel, onStartLexicon, onOpenLogin, isL
       id: 'lexicon-circuit',
       title: 'Lexicon Circuit',
       subtitle: 'Constitution Word Game',
-      image: '/src/assets/Word Game Icon.png',
+      image: '/assets/Word Game Icon.png',
       description: 'Match constitutional terms with their meanings, articles with their concepts, and institutions with their roles',
       objectives: [
         'Strengthening constitutional vocabulary.',
@@ -42,7 +42,7 @@ function Games({ onStartQuiz, onStartSpinWheel, onStartLexicon, onOpenLogin, isL
       id: 'spin-wheel',
       title: 'Circuit Spin',
       subtitle: 'Board Game Style',
-      image: '/src/assets/spin-wheel.png.jpg',
+      image: '/assets/spin-wheel.png.jpg',
       description: "Embark on a level-based journey to learn and explore India's Legislature, Executive, and Judiciary effectively.",
       objectives: [
         'Complete Constitutional Framework.',

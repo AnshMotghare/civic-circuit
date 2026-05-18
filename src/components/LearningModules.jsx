@@ -6,7 +6,7 @@ function LearningModules() {
       title: 'The Parliament',
       articles: 'Articles 79-122',
       description: 'Explore Lok Sabha, Rajya Sabha & the law-making process.',
-      image: '/src/assets/legislature.png.jpg',
+      image: '/assets/legislature.png.jpg',
       topics: [
         'Lok Sabha & Rajya Sabha',
         'Powers, Sessions, Law-making',
@@ -18,7 +18,7 @@ function LearningModules() {
       title: 'Legislative Powers',
       articles: 'Articles 123-151',
       description: 'Discover ordinances, parliamentary privileges & the Supreme Court.',
-      image: '/src/assets/legislative-power.png.jpg',
+      image: '/assets/legislative-power.png.jpg',
       topics: [
         'Ordinances',
         'Parliamentary privileges',
@@ -30,7 +30,7 @@ function LearningModules() {
       title: 'The State Executive',
       articles: 'Articles 152-167',
       description: 'Understand the Governor, Chief Minister & State Executive.',
-      image: '/src/assets/state-executive.png.jpg',
+      image: '/assets/state-executive.png.jpg',
       topics: [
         'Governor',
         'Chief Minister & Council of Ministers',
@@ -42,7 +42,7 @@ function LearningModules() {
       title: 'The State Legislature',
       articles: 'Articles 168-212',
       description: 'Learn about State Assemblies, Councils & law-making powers.',
-      image: '/src/assets/state-legislative.png.jpg',
+      image: '/assets/state-legislative.png.jpg',
       topics: [
         'State Legislative Assembly & its Council',
         'Law-making process in states',

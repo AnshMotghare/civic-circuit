@@ -5,17 +5,17 @@ function ThreeModules() {
     {
       title: 'Legislature',
       subtitle: 'Law Making',
-      image: '/src/assets/legislature.png.jpg' // Replace with your image path
+      image: '/assets/legislature.png.jpg' // Replace with your image path
     },
     {
       title: 'Executive',
       subtitle: 'Implementation',
-      image: '/src/assets/executive.png.jpg' // Replace with your image path
+      image: '/assets/executive.png.jpg' // Replace with your image path
     },
     {
       title: 'Judiciary',
       subtitle: 'Justice Delivery',
-      image: '/src/assets/judiciary.png.jpg' // Replace with your image path
+      image: '/assets/judiciary.png.jpg' // Replace with your image path
     }
   ]
 

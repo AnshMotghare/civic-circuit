@@ -39,21 +39,21 @@ function OurAim() {
             </p>
             <div className="solution-features">
               <div className="solution-feature">
-                <img src="/src/assets/simplified.png.jpg" alt="Simplified Explanations" className="solution-icon" />
+                <img src="/assets/simplified.png.jpg" alt="Simplified Explanations" className="solution-icon" />
                 <div className="solution-text">
                   <h4>Simplified Explanations</h4>
                   <p>Complex constitutional articles broken down into easy-to-understand language</p>
                 </div>
               </div>
               <div className="solution-feature">
-                <img src="/src/assets/interactive.png.jpg" alt="Interactive Games" className="solution-icon" />
+                <img src="/assets/interactive.png.jpg" alt="Interactive Games" className="solution-icon" />
                 <div className="solution-text">
                   <h4>Interactive Games</h4>
                   <p>Gamified learning experiences that make constitutional education engaging</p>
                 </div>
               </div>
               <div className="solution-feature">
-                <img src="/src/assets/multilingual.png.jpg" alt="Multi-language Support" className="solution-icon" />
+                <img src="/assets/multilingual.png.jpg" alt="Multi-language Support" className="solution-icon" />
                 <div className="solution-text">
                   <h4>Multi-language Support</h4>
                   <p>Available in Multiple Indian languages for inclusive learning</p>
