@@ -13,7 +13,7 @@ const getLearnerLevel = (points) => {
 
 
 function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSelect, onStartQuiz, onStartSpinWheel, onStartLexicon }) {
-  const API_ROOT = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+  const API_ROOT = import.meta.env.VITE_API_BASE_URL || 'https://civic-circuit.onrender.com'
   const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY || ''
   const storedFullname = sessionStorage.getItem('fullname') || ''
   const storedEmail = sessionStorage.getItem('email') || ''
@@ -31,27 +31,52 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     const email = sessionStorage.getItem('email')
     if (!email) return
 
+    const applyStats = (data) => {
+      const overallAccuracy = Number(data?.accuracyRate || 0)
+      const lexiconAccuracy = Number(data?.lexiconAccuracyRate || 0)
+
+      setUserStats({
+        gamesCompleted: Number(data?.gamesCompleted || 0),
+        accuracyRate: overallAccuracy > 0 ? overallAccuracy : lexiconAccuracy,
+        attempted: Number(data?.attempted || 0),
+        factor: Number(data?.factor || 0)
+      })
+    }
+
+    const cachedStats = sessionStorage.getItem(`userStats_${email}`)
+    if (cachedStats) {
+      try {
+        applyStats(JSON.parse(cachedStats))
+      } catch {
+        // Ignore malformed cache and continue with API fetch.
+      }
+    }
+
     const fetchUserStats = async () => {
       try {
         const response = await fetch(`${API_ROOT}/app/user/${encodeURIComponent(email)}`)
         if (!response.ok) return
 
         const data = await response.json()
-        const overallAccuracy = Number(data.accuracyRate || 0)
-        const lexiconAccuracy = Number(data.lexiconAccuracyRate || 0)
-
-        setUserStats({
-          gamesCompleted: Number(data.gamesCompleted || 0),
-          accuracyRate: overallAccuracy > 0 ? overallAccuracy : lexiconAccuracy,
-          attempted: Number(data.attempted || 0),
-          factor: Number(data.factor || 0)
-        })
+        applyStats(data)
+        sessionStorage.setItem(`userStats_${email}`, JSON.stringify(data))
       } catch {
         // Keep fallback static stats if API call fails.
       }
     }
 
+    const handleStatsUpdated = (event) => {
+      if (event?.detail?.email === email) {
+        fetchUserStats()
+      }
+    }
+
     fetchUserStats()
+    window.addEventListener('user-stats-updated', handleStatsUpdated)
+
+    return () => {
+      window.removeEventListener('user-stats-updated', handleStatsUpdated)
+    }
   }, [API_ROOT])
 
   useEffect(() => {

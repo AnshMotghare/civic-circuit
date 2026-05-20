@@ -181,6 +181,18 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
       setScore(finalScore)
       setTotalPoints(prev => prev + finalScore)
 
+      // Sync latest backend stats for this specific logged-in user so dashboard points update immediately.
+      try {
+        const statsRes = await fetch(`${API_ROOT}/app/user/${encodeURIComponent(email)}`)
+        if (statsRes.ok) {
+          const latestStats = await statsRes.json()
+          sessionStorage.setItem(`userStats_${email}`, JSON.stringify(latestStats))
+          window.dispatchEvent(new CustomEvent('user-stats-updated', { detail: { email } }))
+        }
+      } catch {
+        // Non-blocking: popup should still show even if stats sync fails.
+      }
+
       setShowScorePopup(true)
     } catch (err) {
       console.error(err)

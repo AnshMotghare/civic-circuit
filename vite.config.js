@@ -6,7 +6,8 @@ export default defineConfig({
   preview: {
     allowedHosts: [
       // 'civic-circuit-production.up.railway.app',
-      'civic-circuit.vercel.app'
+      'civic-circuit.vercel.app',
+      'http://localhost:5173/'
     ],
     host: true,
     port: 8080
