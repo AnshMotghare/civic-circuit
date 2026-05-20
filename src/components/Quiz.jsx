@@ -41,7 +41,7 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
         setLoading(true)
         setError('')
 
-        const res = await fetch(`${QUIZ_API_BASE}/quetions`)
+        const res = await fetch(`${QUIZ_API_BASE}/questions`)
         if (!res.ok) {
           throw new Error('Failed to fetch quiz questions')
         }
