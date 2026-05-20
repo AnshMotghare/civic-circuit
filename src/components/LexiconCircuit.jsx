@@ -550,7 +550,9 @@ const LexiconCircuit = ({ onClose }) => {
                                                     <strong>Article Number:</strong> {selectedArticle.anumber}
                                                 </p>
 
-                                                <p>{selectedArticle.adesc}</p>
+                                                <p style={{ whiteSpace: 'pre-line' }}>
+                                                {selectedArticle.adesc?.replace(/\\n/g, '\n')}
+                                                </p>
                                             </>
                                         )}
                                     </div>
