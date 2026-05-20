@@ -344,40 +344,51 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
 
             {/* Options */}
             <div className="quiz-options">
-              {currentQ.options.map((option, index) => {
-                const qId = currentQ.id
-                const selectedText = answers[qId] ?? null
-                const isSelected = selectedText === option
+            {currentQ.options.map((option, index) => {
+              const qId = currentQ.id
+              const selectedText = answers[qId] ?? null
+              const isSelected = selectedText === option
 
-                return (
-                  <div
-                    key={index}
-                    className={`quiz-option ${isSelected ? 'selected' : ''} ${submitted ? getOptionClass(option).replace('quiz-option', '') : ''}`}
-                    onClick={() => handleAnswerClick(option)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') handleAnswerClick(option)
-                    }}
-                  >
-                    <span className="option-number">{index + 1}.</span>
-                    <span className="option-text">{option}</span>
+              // Build class after submission
+              let optionClass = 'quiz-option'
+              if (!submitted) {
+                if (isSelected) optionClass = 'quiz-option selected'
+              } else {
+                if (isSelected) {
+                  // Only color the selected option — correct or wrong
+                  const isCorrect = resultMap && resultMap[qId]
+                  optionClass = isCorrect ? 'quiz-option correct-answer' : 'quiz-option wrong-answer'
+                }
+                // All other options stay plain — no green highlighting of correct answer
+              }
 
-                    {/* Show "Selected" immediately after click (before submit) */}
-                    {!submitted && isSelected && (
-                      <span className="option-result-tag">Selected</span>
-                    )}
+              return (
+                <div
+                  key={index}
+                  className={optionClass}
+                  onClick={() => !submitted && handleAnswerClick(option)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (!submitted && (e.key === 'Enter' || e.key === ' ')) handleAnswerClick(option)
+                  }}
+                >
+                  <span className="option-number">{index + 1}.</span>
+                  <span className="option-text">{option}</span>
 
-                    {/* After submission keep your existing tag */}
-                    {submitted && selectedForCurrent === option && resultMap && (
-                      <span className="option-result-tag">
-                        {resultMap[currentQ.id] ? '✓ Correct' : '✗ Your answer'}
-                      </span>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
+                  {!submitted && isSelected && (
+                    <span className="option-result-tag">Selected</span>
+                  )}
+
+                  {submitted && isSelected && resultMap && (
+                    <span className="option-result-tag">
+                      {resultMap[qId] ? '✓ Correct' : '✗ Wrong'}
+                    </span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
 
 
             {/* Bottom Navigation */}
