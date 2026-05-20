@@ -259,6 +259,9 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
 
   const currentQ = questions[currentQuestion]
   const selectedForCurrent = getSelectedAnswerForCurrent()
+  const maxScore = questions.length * POINTS_PER_QUESTION
+  const scorePercentage = Math.round((score / maxScore) * 100)
+  const correctAnswers = score / POINTS_PER_QUESTION
 
   return (
     <div className="quiz-page">
@@ -353,18 +356,30 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
               const qId = currentQ.id
               const selectedText = answers[qId] ?? null
               const isSelected = selectedText === option
+              const isCorrectOption = option === currentQ.correctOption
+              const isCorrectAnswer = resultMap && resultMap[qId]
 
-              // Build class after submission
               let optionClass = 'quiz-option'
+
+              // BEFORE SUBMIT
               if (!submitted) {
-                if (isSelected) optionClass = 'quiz-option selected'
-              } else {
                 if (isSelected) {
-                  // Only color the selected option — correct or wrong
-                  const isCorrect = resultMap && resultMap[qId]
-                  optionClass = isCorrect ? 'quiz-option correct-answer' : 'quiz-option wrong-answer'
+                  optionClass = 'quiz-option selected'
                 }
-                // All other options stay plain — no green highlighting of correct answer
+              }
+
+              // AFTER SUBMIT
+              else {
+
+                // Correct answer always green
+                if (isCorrectOption) {
+                  optionClass = 'quiz-option correct-answer'
+                }
+
+                // Wrong selected answer red
+                if (isSelected && !isCorrectAnswer) {
+                  optionClass = 'quiz-option wrong-answer'
+                }
               }
 
               return (
@@ -375,19 +390,31 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
-                    if (!submitted && (e.key === 'Enter' || e.key === ' ')) handleAnswerClick(option)
+                    if (!submitted && (e.key === 'Enter' || e.key === ' ')) {
+                      handleAnswerClick(option)
+                    }
                   }}
                 >
                   <span className="option-number">{index + 1}.</span>
                   <span className="option-text">{option}</span>
 
+                  {/* BEFORE SUBMIT */}
                   {!submitted && isSelected && (
-                    <span className="option-result-tag">Selected</span>
+                    <span className="option-result-tag">
+                      Selected
+                    </span>
                   )}
 
-                  {submitted && isSelected && resultMap && (
+                  {/* AFTER SUBMIT */}
+                  {submitted && isCorrectOption && (
                     <span className="option-result-tag">
-                      {resultMap[qId] ? '✓ Correct' : '✗ Wrong'}
+                      ✓ Correct Answer
+                    </span>
+                  )}
+
+                  {submitted && isSelected && !isCorrectAnswer && (
+                    <span className="option-result-tag">
+                      ✗ Your Answer
                     </span>
                   )}
                 </div>
@@ -425,47 +452,44 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
       {showScorePopup && (
         <div className="score-popup-overlay">
           <div className="score-popup">
-            {/* NEW: Close (X) button */}
             <button
               className="close-popup-btn"
               onClick={() => setShowScorePopup(false)}
+              aria-label="Close score card"
             >
               ✖
             </button>
 
             <div className="score-popup-header">
               <div className="trophy-icon">🏆</div>
-              <h2>Quiz Completed!</h2>
+              <div>
+                <h2>Quiz Completed!</h2>
+                <p className="score-popup-subtitle">Great effort. Here is your summary.</p>
+              </div>
             </div>
+
             <div className="score-popup-content">
               <div className="final-score">
-                <h3>Your Score</h3>
-                <p className="score-number">
-                  {score} / {questions.length * POINTS_PER_QUESTION}
-                </p>
-                <p className="score-percentage">
-                  {Math.round(
-                    (score / (questions.length * POINTS_PER_QUESTION)) * 100
-                  )}
-                  %
-                </p>
+                <p className="final-score-label">Your Score</p>
+                <p className="score-number">{score} / {maxScore}</p>
+                <p className="score-percentage">{scorePercentage}%</p>
               </div>
+
               <div className="score-stats">
                 <div className="stat-item">
                   <span className="stat-label">Correct Answers</span>
-                  <span className="stat-value">
-                    {score / POINTS_PER_QUESTION} / {questions.length}
-                  </span>
+                  <span className="stat-value">{correctAnswers} / {questions.length}</span>
                 </div>
                 <div className="stat-item">
-                  <span className="stat-label">Total Points Earned</span>
+                  <span className="stat-label">Points Earned</span>
                   <span className="stat-value">+{score}</span>
                 </div>
                 <div className="stat-item">
-                  <span className="stat-label">New Total Points</span>
+                  <span className="stat-label">New Total</span>
                   <span className="stat-value">{totalPoints}</span>
                 </div>
               </div>
+
               <button
                 className="back-dashboard-btn"
                 onClick={handleCloseScorePopup}
