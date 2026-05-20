@@ -318,6 +318,13 @@ const LexiconCircuit = ({ onClose }) => {
                 }).catch(() => {
                     // Completion tracking failure should not block UI.
                 });
+                window.dispatchEvent(
+                new CustomEvent('user-stats-updated', {
+                    detail: {
+                    email
+                    }
+                })
+                )
             }
             setGameComplete(true);
         } else {

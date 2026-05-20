@@ -170,6 +170,7 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
 
       setResultMap(result)
       setSubmitted(true)
+      
 
       // Calculate score from result map
       let correctCount = 0
@@ -183,7 +184,11 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
 
       // Sync latest backend stats for this specific logged-in user so dashboard points update immediately.
       try {
-        const statsRes = await fetch(`${API_ROOT}/app/user/${encodeURIComponent(email)}`)
+        await new Promise(resolve => setTimeout(resolve, 500))
+
+const statsRes = await fetch(
+  `${API_ROOT}/app/user/${encodeURIComponent(email)}`
+)
         if (statsRes.ok) {
           const latestStats = await statsRes.json()
           sessionStorage.setItem(`userStats_${email}`, JSON.stringify(latestStats))
