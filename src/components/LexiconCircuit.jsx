@@ -540,16 +540,20 @@ const LexiconCircuit = ({ onClose }) => {
                                     <div className="lexicon-info-card">
                                         <h4 className="lexicon-info-card-title">{currentItem.title || activeWord}</h4>
                                         <div className="lexicon-info-card-content">
-                                            {currentItem.description}
-                                            {selectedArticle && (
-                                                <>
-                                                    <hr />
-                                                    <p><strong>Related Article:</strong> {selectedArticle.atitle}</p>
-                                                    <p><strong>Article Number:</strong> {selectedArticle.anumber}</p>
-                                                    <p>{selectedArticle.adesc}</p>
-                                                </>
-                                            )}
-                                        </div>
+                                        {selectedArticle && (
+                                            <>
+                                                <p>
+                                                    <strong>Related Article:</strong> {selectedArticle.atitle}
+                                                </p>
+
+                                                <p>
+                                                    <strong>Article Number:</strong> {selectedArticle.anumber}
+                                                </p>
+
+                                                <p>{selectedArticle.adesc}</p>
+                                            </>
+                                        )}
+                                    </div>
                                     </div>
                                 </div>
                             )}
