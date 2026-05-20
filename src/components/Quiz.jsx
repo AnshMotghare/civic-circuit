@@ -50,7 +50,12 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
 
         // Backend fields: qid, quetion, option1, option2, option3, rightanswer
         const normalized = data.map(q => {
-          const allOptions = [q.option1, q.option2, q.option3, q.rightanswer]
+          const allOptions = [...new Set([
+            q.option1,
+            q.option2,
+            q.option3,
+            q.rightanswer
+          ])]
           const shuffled = shuffleArray(allOptions)
 
           return {
@@ -364,7 +369,7 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
 
               return (
                 <div
-                  key={index}
+                  key={`${qId}-${option}`}
                   className={optionClass}
                   onClick={() => !submitted && handleAnswerClick(option)}
                   role="button"
