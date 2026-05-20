@@ -263,13 +263,13 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
             {showNamePrompt && (
               <div className="name-prompt">
                 <p style={{ marginBottom: '8px' }}>Looks like this is your first time — pick a display name to show in the app:</p>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <div className="name-prompt-row">
                   <input
                     type="text"
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
                     placeholder="Display name"
-                    style={{ padding: '8px', borderRadius: '6px', border: '1px solid #ccc' }}
+                    className="name-prompt-input"
                   />
                   <button onClick={handleSaveDisplayName} className="save-name-btn">Save</button>
                 </div>
