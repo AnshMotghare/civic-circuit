@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Footer from './Footer'
 import './Quiz.css'
 
-const API_ROOT = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const API_ROOT = import.meta.env.VITE_API_BASE_URL || 'https://civic-circuit.onrender.com'
 const QUIZ_API_BASE = `${API_ROOT}/quiz`
 const POINTS_PER_QUESTION = 100
 
@@ -41,7 +41,7 @@ function Quiz({ onLogout, onNavigateHome, onBackToDashboard }) {
         setLoading(true)
         setError('')
 
-        const res = await fetch(`${QUIZ_API_BASE}/questions`)
+        const res = await fetch(`${QUIZ_API_BASE}/quetions`)
         if (!res.ok) {
           throw new Error('Failed to fetch quiz questions')
         }
