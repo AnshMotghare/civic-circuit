@@ -13,6 +13,7 @@ const getLearnerLevel = (points) => {
 }
 
 // ─── 31 curated Indian Constitution facts ────────────────────────────────────
+// Rotates by day-of-year — same fact for every user on the same calendar day.
 const CONSTITUTION_FACTS = [
   {
     category: "Preamble",
@@ -273,14 +274,6 @@ const CONSTITUTION_FACTS = [
 ]
 // ─────────────────────────────────────────────────────────────────────────────
 
-// ─── Helper: read a numeric value from sessionStorage safely ─────────────────
-const getSessionNumber = (key) => {
-  const val = sessionStorage.getItem(key)
-  const parsed = Number(val)
-  return isNaN(parsed) ? 0 : parsed
-}
-// ─────────────────────────────────────────────────────────────────────────────
-
 function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSelect, onStartQuiz, onStartSpinWheel, onStartLexicon }) {
   const API_ROOT = import.meta.env.VITE_API_BASE_URL || 'https://civic-circuit.onrender.com'
   const storedFullname = sessionStorage.getItem('fullname') || ''
@@ -288,17 +281,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
   const displayNameOverride = storedEmail ? (localStorage.getItem(`displayName_${storedEmail}`) || '') : ''
   const emailName = storedEmail.includes('@') ? storedEmail.split('@')[0] : ''
   const displayName = (displayNameOverride || storedFullname || emailName || 'Guest').trim()
-
-  // ── Seed stats immediately from sessionStorage so they show on first render.
-  // These keys are written by the login handler right after a successful POST
-  // /app/login response (gamesCompleted, accuracyRate, factor, attempted).
-  const [userStats, setUserStats] = useState({
-    gamesCompleted: getSessionNumber('gamesCompleted'),
-    accuracyRate: getSessionNumber('accuracyRate'),
-    attempted: getSessionNumber('attempted'),
-    factor: getSessionNumber('factor'),
-  })
-
+  const [userStats, setUserStats] = useState({ gamesCompleted: 0, accuracyRate: 0, attempted: 0, factor: 0 })
   const [nameInput, setNameInput] = useState(displayName)
   const isFirstTime = sessionStorage.getItem('firstTime') === 'true'
   const [showNamePrompt, setShowNamePrompt] = useState(isFirstTime && !displayNameOverride)
@@ -313,29 +296,20 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
       const overallAccuracy = Number(data?.accuracyRate || 0)
       const lexiconAccuracy = Number(data?.lexiconAccuracyRate || 0)
 
-      const stats = {
+      setUserStats({
         gamesCompleted: Number(data?.gamesCompleted || 0),
         accuracyRate: overallAccuracy > 0 ? overallAccuracy : lexiconAccuracy,
         attempted: Number(data?.attempted || 0),
-        factor: Number(data?.factor || 0),
-      }
-
-      setUserStats(stats)
-
-      // Keep sessionStorage in sync so the seeded values stay fresh
-      sessionStorage.setItem('gamesCompleted', stats.gamesCompleted)
-      sessionStorage.setItem('accuracyRate', stats.accuracyRate)
-      sessionStorage.setItem('attempted', stats.attempted)
-      sessionStorage.setItem('factor', stats.factor)
+        factor: Number(data?.factor || 0)
+      })
     }
 
-    // Try the per-email cache first (avoids a flash of 0s on repeat visits)
     const cachedStats = sessionStorage.getItem(`userStats_${email}`)
     if (cachedStats) {
       try {
         applyStats(JSON.parse(cachedStats))
       } catch {
-        // Ignore malformed cache and fall through to API fetch
+        // Ignore malformed cache and continue with API fetch.
       }
     }
 
@@ -347,7 +321,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
         applyStats(data)
         sessionStorage.setItem(`userStats_${email}`, JSON.stringify(data))
       } catch {
-        // Keep fallback stats if API call fails
+        // Keep fallback static stats if API call fails.
       }
     }
 
@@ -360,7 +334,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     return () => window.removeEventListener('user-stats-updated', handleStatsUpdated)
   }, [API_ROOT])
 
-  // ── Daily Fact — rotates by day-of-year ──────────────────────────────────
+  // ── Daily Fact — no API, rotates by day-of-year ──────────────────────────
   useEffect(() => {
     const getDayOfYear = () => {
       const now = new Date()
@@ -371,6 +345,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     const today = new Date().toDateString()
     const cachedDate = localStorage.getItem('dailyFactDate')
 
+    // Serve from cache if it's still today
     if (cachedDate === today) {
       try {
         const cached = localStorage.getItem('dailyFact')
@@ -484,15 +459,21 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     if (isSpinning) return
     const n = whatWeLearnt.length
     const chosen = Math.floor(Math.random() * n)
-    const baseTurns = 6
+    // rotate several full turns plus the angle for chosen item
+    const baseTurns = 6 // gives a nice spin effect
     const anglePer = 360 / n
+    // center the chosen item by offsetting half a slice
     const targetAngle = baseTurns * 360 + (chosen * anglePer) + anglePer / 2
     setIsSpinning(true)
     setSelectedIndex(null)
+    // apply rotation (CSS transition will animate)
     requestAnimationFrame(() => setRotation(targetAngle))
+
+    // stop after animation time (match CSS transition 3s)
     setTimeout(() => {
       setIsSpinning(false)
       setSelectedIndex(chosen)
+      // keep rotation within 0-360 for future spins
       setRotation(targetAngle % 360)
     }, 3200)
   }
@@ -571,7 +552,7 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
             </h1>
             <nav className="dashboard-nav"></nav>
             <div className="user-section">
-              <span className="username">{sessionStorage.getItem("email") || "Guest"}</span>
+              <span className="username"> {sessionStorage.getItem("email") || "Guest"}</span>
               <button className="logout-btn" onClick={onLogout}>Log Out</button>
             </div>
           </div>
