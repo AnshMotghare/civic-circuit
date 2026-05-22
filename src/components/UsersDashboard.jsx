@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import Footer from './Footer'
-import './UsersDashboard.css'
 
 const POINTS_PER_CORRECT_ANSWER = 100
 
@@ -441,43 +440,6 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
     }
   ]
 
-  const whatWeLearnt = [
-    'How Parliament makes laws',
-    'Fundamental Rights & Duties',
-    'Role of the President & PM',
-    'State vs Union powers',
-    'Role of the Judiciary',
-    'Directive Principles & Schedules'
-  ]
-
-  const [isSpinning, setIsSpinning] = useState(false)
-  const [selectedIndex, setSelectedIndex] = useState(null)
-  const [rotation, setRotation] = useState(0)
-  const wheelRef = useRef(null)
-
-  const handleSpin = () => {
-    if (isSpinning) return
-    const n = whatWeLearnt.length
-    const chosen = Math.floor(Math.random() * n)
-    // rotate several full turns plus the angle for chosen item
-    const baseTurns = 6 // gives a nice spin effect
-    const anglePer = 360 / n
-    // center the chosen item by offsetting half a slice
-    const targetAngle = baseTurns * 360 + (chosen * anglePer) + anglePer / 2
-    setIsSpinning(true)
-    setSelectedIndex(null)
-    // apply rotation (CSS transition will animate)
-    requestAnimationFrame(() => setRotation(targetAngle))
-
-    // stop after animation time (match CSS transition 3s)
-    setTimeout(() => {
-      setIsSpinning(false)
-      setSelectedIndex(chosen)
-      // keep rotation within 0-360 for future spins
-      setRotation(targetAngle % 360)
-    }, 3200)
-  }
-
   const games = [
     {
       id: 'knowledge-quest',
@@ -698,47 +660,6 @@ function UserDashboard({ onLogout, onNavigateHome, onNavigateSupport, onModuleSe
                 </button>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* What We Learnt - Spinner */}
-      <section className="what-we-learnt-section">
-        <div className="container">
-          <h2 className="section-title">What We Learnt</h2>
-          <div className="what-we-learnt-inner">
-            <div className="spinner-container">
-              <div
-                className="spinner-wheel"
-                ref={wheelRef}
-                style={{ transform: `rotate(${rotation}deg)` }}
-              >
-                {whatWeLearnt.map((txt, i) => {
-                  const angle = (360 / whatWeLearnt.length) * i
-                  const r = 120
-                  const transform = `rotate(${angle}deg) translateY(-${r}px) rotate(-${angle}deg)`
-                  return (
-                    <div key={i} className="spinner-item" style={{ transform }}>
-                      {txt}
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-
-            <div className="spin-result">
-              <h3>Spin the Wheel</h3>
-              <p style={{ marginBottom: '12px' }}>Tap to reveal a quick takeaway from your learning.</p>
-              <button className="spin-btn" onClick={handleSpin} disabled={isSpinning}>
-                {isSpinning ? 'Spinning...' : 'Spin'}
-              </button>
-              {selectedIndex !== null && (
-                <div style={{ marginTop: '12px' }}>
-                  <div className="selected-badge">Selected</div>
-                  <p style={{ marginTop: '8px', fontWeight: 600 }}>{whatWeLearnt[selectedIndex]}</p>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </section>
